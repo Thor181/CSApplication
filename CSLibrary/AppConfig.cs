@@ -1,4 +1,6 @@
-﻿using CSLibrary.Results;
+﻿using CSLibrary.Log;
+using CSLibrary.Results;
+using CSLibrary.Stuff;
 using System.Text.Json;
 
 namespace CSLibrary
@@ -7,8 +9,8 @@ namespace CSLibrary
     {
         #region Instance
 
-        private static AppConfig _instance = null!;
-        public static AppConfig Instance => _instance ??= new AppConfig();
+        private static AppConfig _instance = new AppConfig();
+        public static AppConfig Instance => _instance;
 
         #endregion
 
@@ -28,6 +30,7 @@ namespace CSLibrary
         public DbConnectionString DbConnectionString { get; set; } = new DbConnectionString();
 
         private string _configPath = "Config\\Config.json";
+
 
         public void Initialize()
         {
@@ -62,24 +65,42 @@ namespace CSLibrary
         {
             var json = File.ReadAllText(_configPath);
             var deserialized = JsonSerializer.Deserialize<AppConfig>(json);
+
+            if (deserialized == null)
+            {
+                Logger.LoggerInstance.Log("Конфиг не распознан", LogLevel.Fatal);
+                return;
+            }
+
+            var validationResult = Validation.StringsIsNullOrEmpty<AppConfig>(deserialized, x => x.PortInputName,
+                                                                                            x => x.PortOutputName,
+                                                                                            x => x.PortQR1Name,
+                                                                                            x => x.PortQR2Name);
+
+            if (!validationResult.IsSuccses)
+            {
+                Logger.LoggerInstance.Log(validationResult.MessageBuilder.ToString(), LogLevel.Error);
+                Environment.Exit(0);    
+            }
+
             _instance = deserialized;
         }
 
-        public BaseResult ValidateConfig()
+        public static BaseResult Validate(AppConfig appConfig)
         {
             var validationResult = new BaseResult();
 
-            if (string.IsNullOrEmpty(PortInputName))
-                validationResult.MessageBuilder.AppendLine($"Поле {nameof(PortInputName)} не может быть пустым");
+            if (string.IsNullOrEmpty(appConfig.PortInputName))
+                validationResult.MessageBuilder.AppendLine($"Поле {nameof(appConfig.PortInputName)} не может быть пустым");
 
-            if (string.IsNullOrEmpty(PortOutputName))
-                validationResult.MessageBuilder.AppendLine($"Поле {nameof(PortOutputName)} не может быть пустым");
+            if (string.IsNullOrEmpty(appConfig.PortOutputName))
+                validationResult.MessageBuilder.AppendLine($"Поле {nameof(appConfig.PortOutputName)} не может быть пустым");
 
-            if (string.IsNullOrEmpty(PortQR1Name))
-                validationResult.MessageBuilder.AppendLine($"Поле {nameof(PortQR1Name)} не может быть пустым");
+            if (string.IsNullOrEmpty(appConfig.PortQR1Name))
+                validationResult.MessageBuilder.AppendLine($"Поле {nameof(appConfig.PortQR1Name)} не может быть пустым");
 
-            if (string.IsNullOrEmpty(PortQR2Name))
-                validationResult.MessageBuilder.AppendLine($"Поле {nameof(PortQR2Name)} не может быть пустым");
+            if (string.IsNullOrEmpty(appConfig.PortQR2Name))
+                validationResult.MessageBuilder.AppendLine($"Поле {nameof(appConfig.PortQR2Name)} не может быть пустым");
 
 
 
