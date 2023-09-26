@@ -12,11 +12,21 @@ namespace CSApplication
     {
         public static LoggerConsole LoggerInternal;
 
-        public void Main()
+        public async Task Main()
         {
             LoggerInternal = new LoggerConsole();
 
             AppConfig.Instance.Initialize();
+
+            var t = Task.Run(() =>
+            {
+                PortWorker worker = new PortWorker();
+                worker.OpenInputPort();
+
+            });
+
+            Console.Read();
+            await t;
         }
     }
 }

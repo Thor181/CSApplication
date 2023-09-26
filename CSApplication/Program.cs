@@ -5,7 +5,7 @@
         static void Main(string[] args)
         {
             var mainModule = new MainModule();
-            mainModule.Main();
+            mainModule.Main().Wait();
         }
     }
 }

@@ -8,10 +8,10 @@ namespace CSApplication
 {
     public class Render
     {
-        public static void WriteLine(string line, ConsoleColor consoleColor = ConsoleColor.White)
+        public static async Task WriteLine(string line, ConsoleColor consoleColor = ConsoleColor.White)
         {
             Console.ForegroundColor = consoleColor;
-            Console.WriteLine(line);
+            await Console.Out.WriteLineAsync(line);
             Console.ResetColor();
         }
     }

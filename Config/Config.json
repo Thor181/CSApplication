@@ -1,0 +1,1 @@
+{"PortInputName":"COM1","PortOutputName":"COM2","PortQR1Name":"COM3","PortQR2Name":"COM4","PointIdentifier":"PLACE1","FNNumbers":[],"DbConnectionString":{"Server":"localhost","Port":1433,"Database":"MfRADb","User":"","Password":"","TrustedConnection":true,"Encrypt":false}}

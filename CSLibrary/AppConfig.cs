@@ -68,43 +68,51 @@ namespace CSLibrary
 
             if (deserialized == null)
             {
-                Logger.LoggerInstance.Log("Конфиг не распознан", LogLevel.Fatal);
+                Logger.Instance.Log("Конфиг не распознан", LogLevel.Fatal);
                 return;
             }
 
-            var validationResult = Validation.StringsIsNullOrEmpty<AppConfig>(deserialized, x => x.PortInputName,
-                                                                                            x => x.PortOutputName,
-                                                                                            x => x.PortQR1Name,
-                                                                                            x => x.PortQR2Name);
-
-            if (!validationResult.IsSuccses)
-            {
-                Logger.LoggerInstance.Log(validationResult.MessageBuilder.ToString(), LogLevel.Error);
-                Environment.Exit(0);    
-            }
+            ValidateConfig(deserialized);
 
             _instance = deserialized;
         }
 
-        public static BaseResult Validate(AppConfig appConfig)
+        public void ValidateConfig(AppConfig instance)
         {
-            var validationResult = new BaseResult();
+            var validationEmptyStrings = Validation.StringsIsNullOrEmpty<AppConfig>(instance, x => x.PortInputName,
+                                                                                        x => x.PortOutputName,
+                                                                                        x => x.PortQR1Name,
+                                                                                        x => x.PortQR2Name,
+                                                                                        x => x.PointIdentifier);
 
-            if (string.IsNullOrEmpty(appConfig.PortInputName))
-                validationResult.MessageBuilder.AppendLine($"Поле {nameof(appConfig.PortInputName)} не может быть пустым");
+            if (!validationEmptyStrings.IsSuccses)
+                Logger.Instance.Log(validationEmptyStrings.MessageBuilder.ToString(), LogLevel.Error);
 
-            if (string.IsNullOrEmpty(appConfig.PortOutputName))
-                validationResult.MessageBuilder.AppendLine($"Поле {nameof(appConfig.PortOutputName)} не может быть пустым");
+            var stringsLengthValidation = Validation.AllStringsEquals(16, instance.FNNumbers);
 
-            if (string.IsNullOrEmpty(appConfig.PortQR1Name))
-                validationResult.MessageBuilder.AppendLine($"Поле {nameof(appConfig.PortQR1Name)} не может быть пустым");
+            if (!stringsLengthValidation.IsSuccses)
+                Logger.Instance.Log(stringsLengthValidation.MessageBuilder.ToString(), LogLevel.Error);
 
-            if (string.IsNullOrEmpty(appConfig.PortQR2Name))
-                validationResult.MessageBuilder.AppendLine($"Поле {nameof(appConfig.PortQR2Name)} не может быть пустым");
+            var moreThanOneSamePortNames = Validation.StringsCountMoreThanOne(instance.PortInputName,
+                                                                              instance.PortOutputName,
+                                                                              instance.PortQR1Name,
+                                                                              instance.PortQR2Name);
 
+            if (moreThanOneSamePortNames)
+                Logger.Instance.Log("Обнаружены одинаковые имена портов", LogLevel.Error);
 
+            var dbConnectionStringNotValid = instance.DbConnectionString.TrustedConnection == true
+                                            && !string.IsNullOrEmpty(instance.DbConnectionString.User);
 
-            return validationResult;
+            if (!validationEmptyStrings.IsSuccses || !stringsLengthValidation.IsSuccses || moreThanOneSamePortNames)
+                Environment.Exit(1);
+
+            if (instance.FNNumbers.Count == 0)
+                Logger.Instance.Log($"Не обнаружены номера FN ({nameof(instance.FNNumbers)})", LogLevel.Warn);
+
+            if (dbConnectionStringNotValid)
+                Logger.Instance.Log($"Поле {nameof(DbConnectionString.User)} и {nameof(DbConnectionString.Password)} не имеют значения, " +
+                    $"если {nameof(instance.DbConnectionString.TrustedConnection)} равно \"true\"", LogLevel.Warn);
         }
     }
 }
