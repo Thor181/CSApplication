@@ -14,9 +14,10 @@ namespace СSApp.Stuff
 
         public override string Log(string message, LogLevel level, Exception e = null)
         {
-            MessageReceived?.Invoke(message, level, e);
+            var formattedMessage = base.Log(message, level, e);
+            MessageReceived?.Invoke(formattedMessage, level, e);
 
-            return base.Log(message, level, e);
+            return formattedMessage;
         }
     }
 }

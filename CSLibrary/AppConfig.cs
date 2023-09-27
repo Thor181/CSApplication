@@ -16,10 +16,10 @@ namespace CSLibrary
 
         #region Ports names
 
-        public string PortInputName { get; set; } = "COM1";
-        public string PortOutputName { get; set; } = "COM2";
-        public string PortQR1Name { get; set; } = "COM3";
-        public string PortQR2Name { get; set; } = "COM4";
+        public string PortInputName { get; set; } = string.Empty;
+        public string PortOutputName { get; set; } = string.Empty;
+        public string PortQR1Name { get; set; } = string.Empty; 
+        public string PortQR2Name { get; set; } = string.Empty; 
 
         #endregion
 
@@ -30,7 +30,6 @@ namespace CSLibrary
         public DbConnectionString DbConnectionString { get; set; } = new DbConnectionString();
 
         private string _configPath = "Config\\Config.json";
-
 
         public void Initialize()
         {
@@ -104,8 +103,8 @@ namespace CSLibrary
             var dbConnectionStringNotValid = instance.DbConnectionString.TrustedConnection == true
                                             && !string.IsNullOrEmpty(instance.DbConnectionString.User);
 
-            if (!validationEmptyStrings.IsSuccses || !stringsLengthValidation.IsSuccses || moreThanOneSamePortNames)
-                Environment.Exit(1);
+            //if (!validationEmptyStrings.IsSuccses || !stringsLengthValidation.IsSuccses || moreThanOneSamePortNames)
+            //    Environment.Exit(1);
 
             if (instance.FNNumbers.Count == 0)
                 Logger.Instance.Log($"Не обнаружены номера FN ({nameof(instance.FNNumbers)})", LogLevel.Warn);

@@ -6,12 +6,23 @@
         xmlns:local="clr-namespace:СSApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Style>
+        <Style TargetType="Window"
+               BasedOn="{StaticResource {x:Type Window}}" />
+    </Window.Style>
     <Window.DataContext>
-        <local:MainViewModel />
+        <local:MainViewModel /> 
     </Window.DataContext>
     <Grid>
-        <ScrollViewer>
-            <ListBox ItemsSource="{Binding MessagesCollection}" />
+        <ScrollViewer x:Name="ScrollViewer"
+                      ScrollChanged="ScrollViewer_ScrollChanged">
+            <ListBox ItemsSource="{Binding MessagesCollection}" IsEnabled="False">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <local:LineControl DataContext="{Binding}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </ScrollViewer>
     </Grid>
 </Window>

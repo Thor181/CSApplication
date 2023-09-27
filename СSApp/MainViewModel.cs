@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.IO.Ports;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using СSApp.Models;
 using СSApp.Stuff;
 
 namespace СSApp
@@ -17,23 +19,39 @@ namespace СSApp
     {
         public LoggerWpf LoggerInternal { get; set; }
 
-        public ObservableCollection<string> MessagesCollection { get; set; }
+        public ObservableCollection<LineModel> MessagesCollection { get; set; }
 
         public event NotifyCollectionChangedEventHandler? CollectionChanged;
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public PortWorker PortWorker { get; set; }
+
+        private Dictionary<string, Action<SerialPort, string>> _portsActions;
+
         public MainViewModel()
         {
-            MessagesCollection = new ObservableCollection<string>();
+            _portsActions = new()
+            {
+                { AppConfig.Instance.PortInputName, InputPortDataReceived }
+            };
+
+            MessagesCollection = new();
             MessagesCollection.CollectionChanged += OnCollectionChanged;
-            
+
             LoggerInternal = new LoggerWpf();
             LoggerInternal.MessageReceived += LoggerInternal_MessageReceived;
-            
+
             AppConfig.Instance.Initialize();
 
-            var portWorker = new PortWorker();
-            portWorker.OpenPorts();
+            PortWorker = new PortWorker();
+            PortWorker.OpenPorts();
+
+            PortWorker.PortDataReceived += (SerialPort port, string data) => { _portsActions[port.PortName].Invoke(port, data); };
+        }
+
+        private void InputPortDataReceived(SerialPort port, string data)
+        {
+
         }
 
         private void LoggerInternal_MessageReceived(string message, CSLibrary.Log.LogLevel logLevel, Exception e = null)
@@ -41,9 +59,9 @@ namespace СSApp
             App.Current.Dispatcher.Invoke(() =>
             {
                 if (MessagesCollection.Count > 100)
-                    MessagesCollection.RemoveAt(0);
+                    MessagesCollection.RemoveAt(100);
 
-                MessagesCollection.Add(message);
+                MessagesCollection.Add(new LineModel() { Line = message, LogLevel = logLevel });
             });
         }
 
