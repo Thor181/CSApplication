@@ -1,9 +1,12 @@
-﻿using System;
+﻿using CSLibrary.Data.Interfaces;
+using CSLibrary.Stuff;
+using System;
 using System.Collections.Generic;
 
 namespace CSLibrary.Data.Models;
 
-public partial class User
+[LocalizedName("Пользователь")]
+public partial class User : IDbEntity
 {
     public Guid Id { get; set; }
 

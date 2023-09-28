@@ -1,13 +1,42 @@
-﻿using System;
+﻿using CSLibrary.Data.Models;
+using CSLibrary.Stuff;
+using CSLibrary.Stuff.Results;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CSLibrary.Data.Logic
 {
-    public class UserLogic
+    public class UserLogic : BaseLogic
     {
+        public DbResult<User> FindUserByCardNumber(string cardNumber)
+        {
+            var result = new DbResult<User>();
 
+            var baseResult = Get<User>(x => x.Card.ToLower() == cardNumber.ToLower());
+
+            if (!baseResult.DbAvailable)
+            {
+                result.DbAvailable = false;
+                return result;
+            }
+            
+            var user = baseResult.Entity?.SingleOrDefault();
+
+            if (user == null)
+            {
+                result.IsSuccess = false;
+                result.MessageBuilder.AppendLine($"Запись с кодом карты \"{cardNumber}\" не найдена в базе данных");
+
+                return result;
+            }
+
+            result.Entity = user;
+
+            return result;
+        }
     }
 }

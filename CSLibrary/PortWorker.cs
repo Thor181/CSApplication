@@ -13,14 +13,13 @@ namespace CSLibrary
         public delegate void PortDataReceivedEventHandler(SerialPort port, string data);
         public event PortDataReceivedEventHandler PortDataReceived;
 
+        public const int x31 = 0x31;
+        public const int x32 = 0x32;
+        public const int x33 = 0x33;
+
         private readonly int _baudRate = 9600;
         private readonly Parity _parity = Parity.None;
         private readonly int _dataBits = 8;
-
-        public PortWorker()
-        {
-            
-        }
 
         public void OpenPorts()
         {
@@ -51,52 +50,63 @@ namespace CSLibrary
 
         private void OpenPort(SerialPort serialPort)
         {
-            serialPort.Open();
-            Logger.Instance.Log($"Порт {serialPort.PortName} открыт", LogLevel.Success);
+            try
+            {
+                serialPort.Open();
+                Logger.Instance.Log($"Порт {serialPort.PortName} открыт", LogLevel.Success);
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.Log($"При открытии порта {serialPort.PortName} возникла ошибка", LogLevel.Error, e);
+            }
         }
 
         private void InputPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             var port = (SerialPort)sender;
-            var data = port.ReadExisting();
-         
-            Logger.Instance.Log($"Получено ({port.PortName}): {data}", LogLevel.Info);
+            try
+            {
+                var data = port.ReadExisting();
+                Logger.Instance.Log($"Получено ({port.PortName}): {data}", LogLevel.Info);
 
-            PortDataReceived?.Invoke(port, data);
+                PortDataReceived?.Invoke(port, data);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Logger.Instance.Log($"Порт {port.PortName} не открыт", LogLevel.Error, ex);
+                OpenPort(port);
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.Log("Ошибка", LogLevel.Error, ex);
+            }
         }
-
-        //private void OutputPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        //{
-        //    var port = (SerialPort)sender;
-        //    var line = port.ReadExisting();
-
-        //    Logger.Instance.Log(line, LogLevel.Info);
-        //}
-
-        //private void QR1Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        //{
-        //    var port = (SerialPort)sender;
-        //    var line = port.ReadExisting();
-
-        //    Logger.Instance.Log(line, LogLevel.Info);
-        //}
-
-        //private void QR2Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        //{
-        //    var port = (SerialPort)sender;
-        //    var line = port.ReadExisting();
-
-        //    Logger.Instance.Log(line, LogLevel.Info);
-        //}
-
-        //private void Port_DataReceived(string portName, SerialPort serialPort)
-        //{
-
-        //}
 
         private void InputPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
-            throw new Exception(e.EventType.ToString());
+            if (sender is SerialPort port)
+                Logger.Instance.Log($"От порта {port.PortName} получена ошибка | {e.EventType}", LogLevel.Error);
+            else
+                Logger.Instance.Log($"Непредвиденная ошибка | {e.EventType}", LogLevel.Error);
+        }
+
+        public void SendResponse(SerialPort serialPort, byte data)
+        {
+            try
+            {
+                serialPort.Write(new byte[] { data }, 0, 1);
+                Logger.Instance.Log($"Отправлено ({serialPort.PortName}): {data}", LogLevel.Info);
+            }
+            catch (InvalidOperationException e)
+            {
+                Logger.Instance.Log($"Порт {serialPort.PortName} не открыт", LogLevel.Error, e);
+                OpenPort(serialPort);
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.Log($"При отправке ответа на порт {serialPort.PortName} возникла ошибка", LogLevel.Error, e);
+            }
+
         }
     }
 }

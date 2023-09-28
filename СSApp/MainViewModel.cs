@@ -1,4 +1,6 @@
 ﻿using CSLibrary;
+using CSLibrary.Data.Logic;
+using CSLibrary.Log;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,15 +28,11 @@ namespace СSApp
 
         public PortWorker PortWorker { get; set; }
 
+
         private Dictionary<string, Action<SerialPort, string>> _portsActions;
 
         public MainViewModel()
         {
-            _portsActions = new()
-            {
-                { AppConfig.Instance.PortInputName, InputPortDataReceived }
-            };
-
             MessagesCollection = new();
             MessagesCollection.CollectionChanged += OnCollectionChanged;
 
@@ -46,11 +44,45 @@ namespace СSApp
             PortWorker = new PortWorker();
             PortWorker.OpenPorts();
 
+            _portsActions = new()
+            {
+                { AppConfig.Instance.PortInputName, InputPortDataReceived }
+            };
+
             PortWorker.PortDataReceived += (SerialPort port, string data) => { _portsActions[port.PortName].Invoke(port, data); };
         }
 
         private void InputPortDataReceived(SerialPort port, string data)
         {
+            using var userLogic = new UserLogic();
+
+            var findResult = userLogic.FindUserByCardNumber(data);
+
+            if (!findResult.DbAvailable)
+            {
+                Logger.Instance.Log("База данных недоступна", LogLevel.Error);
+                PortWorker.SendResponse(port, PortWorker.x31);
+                return;
+            }
+
+            if (!findResult.IsSuccess || findResult.Entity == null)
+            {
+                Logger.Instance.Log(findResult.MessageBuilder.ToString(), LogLevel.Error);
+                PortWorker.SendResponse(port, PortWorker.x32);
+                return;
+            }
+
+            var entity = findResult.Entity;
+            
+            var isExpired = entity.Before >= DateTime.Now;
+            if (isExpired)
+            {
+                Logger.Instance.Log($"Значение поля {nameof(entity.Before)} больше либо равно текущей дате", LogLevel.Error);
+                PortWorker.SendResponse(port, PortWorker.x33);
+                return;
+            }
+
+            if (port.PortName == AppConfig.Instance.PortInputName && entity.PlaceId == )
 
         }
 
@@ -69,5 +101,6 @@ namespace СSApp
         {
             CollectionChanged?.Invoke(this, e);
         }
+
     }
 }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CSLibrary.Data.Interfaces;
 
 namespace CSLibrary.Data.Models;
 
-public partial class Place
+public partial class Place : IHelperEntity
 {
     public int Id { get; set; }
 
