@@ -1,4 +1,5 @@
-﻿using CSLibrary.Data.Logic;
+﻿using CSLibrary.Data.Interfaces;
+using CSLibrary.Data.Logic;
 using CSLibrary.Data.Models;
 using CSLibrary.Stuff.Results;
 using System;
@@ -11,8 +12,18 @@ namespace CSLibrary.Stuff
 {
     public class PersistentValues
     {
-        public Place AtTerritoryPlace { get; private set; }
-        public Place OutTerritoryPlace { get; private set; }
+        public Place? AtTerritoryPlace;
+        public Place? OutTerritoryPlace;
+
+        public EventsType? Entrance;
+        public EventsType? Exit;
+
+        public Point Point;
+
+        public PersistentValues()
+        {
+            
+        }
 
         public BaseResult Initialize()
         {
@@ -20,35 +31,44 @@ namespace CSLibrary.Stuff
 
             using var helperLogic = new HelperEntityLogic<Place>();
 
-            
+            result = InitializeInternal(helperLogic, ref AtTerritoryPlace!, Constants.AtTerritoryPlaceName);
 
-            AtTerritoryPlace = baseResult.Entity;
-
-            baseResult = helperLogic.Get(x => x.Name == Constants.OutTerritoryPlace);
-
-            if (!baseResult.IsSuccess)
-            {
-                result.IsSuccess = false;
-                result.MessageBuilder.AppendLine(baseResult.MessageBuilder.ToString());
-
+            if (!result.IsSuccess)
                 return result;
-            }
 
-            if (baseResult.Entity == null)
-            {
-                result.IsSuccess = false;
-                result.MessageBuilder.AppendLine($"Сущность \"{nameof(Place)}\" не найдена в базе данных");
+            result = InitializeInternal(helperLogic, ref OutTerritoryPlace!, Constants.OutTerritoryPlaceName);
 
+            if (!result.IsSuccess)
                 return result;
-            }
 
+            using var typeHelperLogic = new HelperEntityLogic<EventsType>();
+
+            result = InitializeInternal(typeHelperLogic, ref Entrance!, Constants.EntranceTypeName);
+
+            if (!result.IsSuccess)
+                return result;
+
+            result = InitializeInternal(typeHelperLogic, ref Exit!, Constants.ExitTypeName);
+
+            if (!result.IsSuccess)
+                return result;
+
+            using var pointHelperLogic = new HelperEntityLogic<Point>();
+
+            result = InitializeInternal(pointHelperLogic, ref Point, AppConfig.Instance.PointIdentifier);
+
+            if (!result.IsSuccess)
+                return result;
+
+            result.MessageBuilder.AppendLine($"{nameof(PersistentValues)} успешно инициализировано");
             return result;
-
         }
 
-        private BaseResult InitializeInternal()
+        private BaseResult InitializeInternal<T>(HelperEntityLogic<T> helperLogic, ref T initializableProp, string name) where T : class, IHelperEntity
         {
-            var baseResult = helperLogic.Get(x => x.Name == Constants.AtTerritoryPlace);
+            var result = new BaseResult();
+
+            var baseResult = helperLogic.Get(x => x.Name == name);
 
             if (!baseResult.DbAvailable)
             {
@@ -66,13 +86,19 @@ namespace CSLibrary.Stuff
                 return result;
             }
 
-            if (baseResult.Entity == null)
+            var entity = baseResult.Entity?.SingleOrDefault();
+
+            if (baseResult.Entity == null || entity == null)
             {
                 result.IsSuccess = false;
-                result.MessageBuilder.AppendLine($"Сущность \"{nameof(Place)}\" не найдена в базе данных");
+                result.MessageBuilder.AppendLine($"Сущность \"{typeof(T).Name}\" не найдена в базе данных");
 
                 return result;
             }
+
+            initializableProp = entity;
+
+            return result;
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace CSLibrary.Data.Models;
 
-public partial class Place : IHelperEntity
+public partial class Place : IHelperEntity, IDbEntity
 {
     public int Id { get; set; }
 

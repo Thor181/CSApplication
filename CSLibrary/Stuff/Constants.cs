@@ -8,7 +8,11 @@ namespace CSLibrary.Stuff
 {
     public class Constants
     {
-        public const string AtTerritoryPlace = "На территории";
-        public const string OutTerritoryPlace = "За территорией";
+        public const string AtTerritoryPlaceName = "На территории";
+        public const string OutTerritoryPlaceName = "За территорией";
+
+        public const string EntranceTypeName = "Вход";
+        public const string ExitTypeName = "Выход";
+
     }
 }

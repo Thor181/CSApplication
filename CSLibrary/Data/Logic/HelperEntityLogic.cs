@@ -12,13 +12,13 @@ namespace CSLibrary.Data.Logic
 {
     public class HelperEntityLogic<T> : BaseLogic where T : class, IHelperEntity
     {
-        public DbResult<T> Get(Expression<Func<T, bool>> predicate)
+        public DbResult<IQueryable<T>> Get(Expression<Func<T, bool>> predicate)
         {
-            var result = new DbResult<T>();
+            var result = new DbResult<IQueryable<T>>();
 
-            var baseResult = Get(predicate);
+            var entities = _dbContext.Set<T>().Where(predicate);
 
-            if (!baseResult.DbAvailable)
+            if (!DbAvailable)
             {
                 result.DbAvailable = false;
                 result.IsSuccess = false;
@@ -26,7 +26,7 @@ namespace CSLibrary.Data.Logic
                 return result;
             }
 
-            result.Entity = baseResult.Entity;
+            result.Entity = entities;
 
             return result;
         }

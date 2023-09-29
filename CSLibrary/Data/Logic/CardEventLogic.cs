@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSLibrary.Data.Interfaces
+namespace CSLibrary.Data.Logic
 {
-    public interface IHelperEntity
+    public class CardEventLogic : BaseLogic
     {
-        public string Name { get; set; }
     }
 }

@@ -1,9 +1,10 @@
-﻿using System;
+﻿using CSLibrary.Data.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace CSLibrary.Data.Models;
 
-public partial class Point
+public partial class Point : IHelperEntity, IDbEntity
 {
     public int Id { get; set; }
 

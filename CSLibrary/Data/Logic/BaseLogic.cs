@@ -23,6 +23,33 @@ namespace CSLibrary.Data.Logic
             _dbContext = new MfRadbContext();
         }
 
+        public virtual DbResult<T> Add<T>(T entity) where T : class
+        {
+            var result = new DbResult<T>();
+
+            if (!DbAvailable)
+            {
+                result.IsSuccess = false;
+                result.DbAvailable = false;
+
+                return result;
+            }
+
+            try
+            {
+                _dbContext.Add(entity);
+                _dbContext.SaveChanges();
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.MessageBuilder.AppendLine($"При добавлении сущности ({nameof(T)}) в базу данных возникла ошибка | {e.Message}");
+
+                return result;
+            }
+        }
+
         public virtual DbResult<IQueryable<T>> Get<T>(Expression<Func<T, bool>> predicate) where T : class, IDbEntity
         {
             var result = new DbResult<IQueryable<T>>();

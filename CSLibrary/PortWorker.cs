@@ -13,9 +13,11 @@ namespace CSLibrary
         public delegate void PortDataReceivedEventHandler(SerialPort port, string data);
         public event PortDataReceivedEventHandler PortDataReceived;
 
+        public const int x06 = 0x06;
         public const int x31 = 0x31;
         public const int x32 = 0x32;
         public const int x33 = 0x33;
+        public const int x34 = 0x34;
 
         private readonly int _baudRate = 9600;
         private readonly Parity _parity = Parity.None;
@@ -67,7 +69,7 @@ namespace CSLibrary
             try
             {
                 var data = port.ReadExisting();
-                Logger.Instance.Log($"Получено ({port.PortName}): {data}", LogLevel.Info);
+                Logger.Instance.Log($"<- Получено ({port.PortName}): {data}", LogLevel.Info);
 
                 PortDataReceived?.Invoke(port, data);
             }
@@ -90,12 +92,12 @@ namespace CSLibrary
                 Logger.Instance.Log($"Непредвиденная ошибка | {e.EventType}", LogLevel.Error);
         }
 
-        public void SendResponse(SerialPort serialPort, byte data)
+        public void SendHexResponse(SerialPort serialPort, byte data)
         {
             try
             {
                 serialPort.Write(new byte[] { data }, 0, 1);
-                Logger.Instance.Log($"Отправлено ({serialPort.PortName}): {data}", LogLevel.Info);
+                Logger.Instance.Log($"-> Отправлено ({serialPort.PortName}): 0x{Convert.ToHexString(new byte[] { data })}", LogLevel.Info);
             }
             catch (InvalidOperationException e)
             {

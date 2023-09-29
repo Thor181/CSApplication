@@ -1,6 +1,8 @@
 ﻿using CSLibrary;
 using CSLibrary.Data.Logic;
+using CSLibrary.Data.Models;
 using CSLibrary.Log;
+using CSLibrary.Stuff;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,6 +30,7 @@ namespace СSApp
 
         public PortWorker PortWorker { get; set; }
 
+        private PersistentValues PersistentValues { get; set; }
 
         private Dictionary<string, Action<SerialPort, string>> _portsActions;
 
@@ -41,6 +44,13 @@ namespace СSApp
 
             AppConfig.Instance.Initialize();
 
+            InitializePorts();
+
+            InitializePersistentValus();
+        }
+
+        private void InitializePorts()
+        {
             PortWorker = new PortWorker();
             PortWorker.OpenPorts();
 
@@ -52,6 +62,16 @@ namespace СSApp
             PortWorker.PortDataReceived += (SerialPort port, string data) => { _portsActions[port.PortName].Invoke(port, data); };
         }
 
+        private void InitializePersistentValus()
+        {
+            PersistentValues = new PersistentValues();
+
+            var result = PersistentValues.Initialize();
+
+            var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
+            Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
+        }
+
         private void InputPortDataReceived(SerialPort port, string data)
         {
             using var userLogic = new UserLogic();
@@ -61,28 +81,59 @@ namespace СSApp
             if (!findResult.DbAvailable)
             {
                 Logger.Instance.Log("База данных недоступна", LogLevel.Error);
-                PortWorker.SendResponse(port, PortWorker.x31);
+                PortWorker.SendHexResponse(port, PortWorker.x31);
                 return;
             }
 
             if (!findResult.IsSuccess || findResult.Entity == null)
             {
                 Logger.Instance.Log(findResult.MessageBuilder.ToString(), LogLevel.Error);
-                PortWorker.SendResponse(port, PortWorker.x32);
+                PortWorker.SendHexResponse(port, PortWorker.x32);
                 return;
             }
 
             var entity = findResult.Entity;
-            
-            var isExpired = entity.Before >= DateTime.Now;
+
+            var isExpired = DateTime.Now >= entity.Before;
             if (isExpired)
             {
-                Logger.Instance.Log($"Значение поля {nameof(entity.Before)} больше либо равно текущей дате", LogLevel.Error);
-                PortWorker.SendResponse(port, PortWorker.x33);
+                Logger.Instance.Log($"Значение поля {nameof(entity.Before)} больше либо равно текущей дате (Номер карты: {entity.Card})", LogLevel.Error);
+                PortWorker.SendHexResponse(port, PortWorker.x33);
                 return;
             }
 
-            if (port.PortName == AppConfig.Instance.PortInputName && entity.PlaceId == )
+            if ((port.PortName == AppConfig.Instance.PortInputName && entity.PlaceId == PersistentValues.OutTerritoryPlace?.Id)
+                || (port.PortName == AppConfig.Instance.PortOutputName && entity.PlaceId == PersistentValues.AtTerritoryPlace?.Id))
+            {
+                PortWorker.SendHexResponse(port, PortWorker.x06);
+                WriteCardEvent(entity, port.PortName);
+            }
+            else
+            {
+                if (entity.Staff)
+                {
+                    PortWorker.SendHexResponse(port, PortWorker.x06);
+                    WriteCardEvent(entity, port.PortName);
+                }
+                else
+                {
+                    PortWorker.SendHexResponse(port, PortWorker.x34);
+                }
+            }
+
+        }
+
+        private void WriteCardEvent(User user, string portName)
+        {
+            using var cardEventLogic = new CardEventLogic();
+
+            var cardEvent = new CardEvent();
+            cardEvent.Dt = DateTime.Now;
+            cardEvent.TypeId = portName == AppConfig.Instance.PortInputName ? PersistentValues.Entrance.Id : PersistentValues.Exit.Id;
+            cardEvent.PointId = PersistentValues.Point.Id;
+            cardEvent.Card = user.Card;
+
+            cardEventLogic.Add(cardEvent);
 
         }
 
