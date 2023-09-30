@@ -1,10 +1,12 @@
-﻿namespace CSLibrary.Log
+﻿using CSLibrary.Stuff;
+
+namespace CSLibrary.Log
 {
     public class Logger
     {
         public static Logger Instance { get; set; }
 
-        private string _logsPath = "Logs\\";
+        private string _logsPath = $"{Constants.MainFolderPath}\\Logs\\";
         private string _extension = ".log";
 
         public Logger()

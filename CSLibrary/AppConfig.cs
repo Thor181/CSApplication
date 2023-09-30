@@ -28,7 +28,7 @@ namespace CSLibrary
 
         public DbConnectionString DbConnectionString { get; set; } = new DbConnectionString();
 
-        private string _configPath = "Config\\Config.json";
+        private string _configPath = $"{Constants.MainFolderPath}\\Config\\Config.json";
 
         public void Initialize()
         {

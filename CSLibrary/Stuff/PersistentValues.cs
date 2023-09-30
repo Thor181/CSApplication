@@ -95,7 +95,7 @@ namespace CSLibrary.Stuff
             if (baseResult.Entity == null || entity == null)
             {
                 result.IsSuccess = false;
-                result.MessageBuilder.AppendLine($"Сущность \"{typeof(T).Name}\" не найдена в базе данных");
+                result.MessageBuilder.AppendLine($"Сущность \"{typeof(T).Name}\" с именем \"{name}\" не найдена в базе данных");
 
                 return result;
             }

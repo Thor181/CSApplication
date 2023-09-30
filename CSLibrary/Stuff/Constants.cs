@@ -10,5 +10,6 @@
 
         public const string EmptyPayType = "-";
 
+        public static string MainFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MfRA", "CSApplication");
     }
 }
