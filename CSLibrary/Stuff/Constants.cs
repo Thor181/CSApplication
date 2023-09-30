@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CSLibrary.Stuff
+﻿namespace CSLibrary.Stuff
 {
     public class Constants
     {
@@ -13,6 +7,8 @@ namespace CSLibrary.Stuff
 
         public const string EntranceTypeName = "Вход";
         public const string ExitTypeName = "Выход";
+
+        public const string EmptyPayType = "-";
 
     }
 }

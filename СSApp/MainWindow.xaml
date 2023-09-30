@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:СSApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="1000" ResizeMode="NoResize"
+        Name="MainView">
     <Window.Style>
         <Style TargetType="Window"
                BasedOn="{StaticResource {x:Type Window}}" />
@@ -16,10 +17,12 @@
     <Grid>
         <ScrollViewer x:Name="ScrollViewer"
                       ScrollChanged="ScrollViewer_ScrollChanged">
-            <ListBox ItemsSource="{Binding MessagesCollection}" IsEnabled="False">
+            <ListBox ItemsSource="{Binding MessagesCollection}"
+                     IsEnabled="False"
+                     Width="950">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <local:LineControl DataContext="{Binding}" />
+                        <local:LineControl DataContext="{Binding}" Width="950"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

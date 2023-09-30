@@ -1,9 +1,10 @@
-﻿using System;
+﻿using CSLibrary.Data.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace CSLibrary.Data.Models;
 
-public partial class Qrevent
+public partial class Qrevent : IDbEntity
 {
     public Guid Id { get; set; }
 

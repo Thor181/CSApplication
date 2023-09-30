@@ -1,12 +1,7 @@
 ﻿using CSLibrary.Data.Interfaces;
 using CSLibrary.Data.Models;
 using CSLibrary.Stuff.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSLibrary.Data.Logic
 {
@@ -39,12 +34,15 @@ namespace CSLibrary.Data.Logic
             {
                 _dbContext.Add(entity);
                 _dbContext.SaveChanges();
+
+                result.MessageBuilder.AppendLine($"Сущность {typeof(T).Name} успешно добавлена");
+
                 return result;
             }
             catch (Exception e)
             {
                 result.IsSuccess = false;
-                result.MessageBuilder.AppendLine($"При добавлении сущности ({nameof(T)}) в базу данных возникла ошибка | {e.Message}");
+                result.MessageBuilder.AppendLine($"При добавлении сущности ({typeof(T).Name}) в базу данных возникла ошибка | {e.Message} | {e.InnerException}");
 
                 return result;
             }
@@ -67,6 +65,7 @@ namespace CSLibrary.Data.Logic
             return result;
         }
 
+        #region Dispose
         public void Dispose()
         {
             Dispose(true);
@@ -81,5 +80,6 @@ namespace CSLibrary.Data.Logic
                     _dbContext.Dispose();
             }
         }
+        #endregion
     }
 }

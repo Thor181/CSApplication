@@ -2,11 +2,6 @@
 using CSLibrary.Data.Logic;
 using CSLibrary.Data.Models;
 using CSLibrary.Stuff.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSLibrary.Stuff
 {
@@ -19,6 +14,8 @@ namespace CSLibrary.Stuff
         public EventsType? Exit;
 
         public Point Point;
+
+        public PayType EmptyPayType;
 
         public PersistentValues()
         {
@@ -56,6 +53,13 @@ namespace CSLibrary.Stuff
             using var pointHelperLogic = new HelperEntityLogic<Point>();
 
             result = InitializeInternal(pointHelperLogic, ref Point, AppConfig.Instance.PointIdentifier);
+
+            if (!result.IsSuccess)
+                return result;
+
+            using var payTypeHelperLogic = new HelperEntityLogic<PayType>();
+
+            result = InitializeInternal(payTypeHelperLogic, ref EmptyPayType, Constants.EmptyPayType);
 
             if (!result.IsSuccess)
                 return result;

@@ -1,11 +1,5 @@
-﻿using CSLibrary.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using CSLibrary.Stuff.Results;
 using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CSLibrary.Stuff
 {
@@ -21,7 +15,7 @@ namespace CSLibrary.Stuff
                 var value = expression.Compile().Invoke(instance);
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    result.IsSuccses = false;
+                    result.IsSuccess = false;
                     result.MessageBuilder.AppendLine($"Значение поля {memberName} было пустым");
                 }
             }
@@ -37,7 +31,7 @@ namespace CSLibrary.Stuff
             {
                 if (str.Length != length)
                 {
-                    result.IsSuccses = false;
+                    result.IsSuccess = false;
                     result.MessageBuilder.AppendLine($"Длина строки \"{str}\" не равна {length}");
                 }
             }

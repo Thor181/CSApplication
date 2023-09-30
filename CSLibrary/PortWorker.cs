@@ -5,10 +5,10 @@ namespace CSLibrary
 {
     public class PortWorker
     {
-        private SerialPort InputPort { get; set; }
-        private SerialPort OutputPort { get; set; }
-        private SerialPort QR1Port { get; set; }
-        private SerialPort QR2Port { get; set; }
+        public SerialPort InputPort { get; private set; }
+        public SerialPort OutputPort { get; private set; }
+        public SerialPort QR1Port { get; private set; }
+        public SerialPort QR2Port { get; private set; }
 
         public delegate void PortDataReceivedEventHandler(SerialPort port, string data);
         public event PortDataReceivedEventHandler PortDataReceived;
@@ -18,6 +18,9 @@ namespace CSLibrary
         public const int x32 = 0x32;
         public const int x33 = 0x33;
         public const int x34 = 0x34;
+        public const int x41 = 0x41;
+        public const int x42 = 0x42;
+        public const int x43 = 0x43;
 
         private readonly int _baudRate = 9600;
         private readonly Parity _parity = Parity.None;
@@ -28,16 +31,20 @@ namespace CSLibrary
             try
             {
                 InputPort = new SerialPort(AppConfig.Instance.PortInputName, _baudRate, _parity, _dataBits);
-                InputPort.DataReceived += InputPort_DataReceived;
+                InputPort.DataReceived += PortDataReceivedInternal;
+                InputPort.ErrorReceived += PortErrorReceivedInternal;
 
                 OutputPort = new SerialPort(AppConfig.Instance.PortOutputName, _baudRate, _parity, _dataBits);
-                OutputPort.DataReceived += InputPort_DataReceived;
+                OutputPort.DataReceived += PortDataReceivedInternal;
+                OutputPort.ErrorReceived += PortErrorReceivedInternal;
 
                 QR1Port = new SerialPort(AppConfig.Instance.PortQR1Name, _baudRate, _parity, _dataBits);
-                QR1Port.DataReceived += InputPort_DataReceived;
+                QR1Port.DataReceived += PortDataReceivedInternal;
+                QR1Port.ErrorReceived += PortErrorReceivedInternal;
 
                 QR2Port = new SerialPort(AppConfig.Instance.PortQR2Name, _baudRate, _parity, _dataBits);
-                QR2Port.DataReceived += InputPort_DataReceived;
+                QR2Port.DataReceived += PortDataReceivedInternal;
+                QR2Port.ErrorReceived += PortErrorReceivedInternal;
 
                 OpenPort(InputPort);
                 OpenPort(OutputPort);
@@ -63,7 +70,7 @@ namespace CSLibrary
             }
         }
 
-        private void InputPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void PortDataReceivedInternal(object sender, SerialDataReceivedEventArgs e)
         {
             var port = (SerialPort)sender;
             try
@@ -84,7 +91,7 @@ namespace CSLibrary
             }
         }
 
-        private void InputPort_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
+        private void PortErrorReceivedInternal(object sender, SerialErrorReceivedEventArgs e)
         {
             if (sender is SerialPort port)
                 Logger.Instance.Log($"От порта {port.PortName} получена ошибка | {e.EventType}", LogLevel.Error);
@@ -108,7 +115,6 @@ namespace CSLibrary
             {
                 Logger.Instance.Log($"При отправке ответа на порт {serialPort.PortName} возникла ошибка", LogLevel.Error, e);
             }
-
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using CSLibrary.Log;
-using CSLibrary.Results;
 using CSLibrary.Stuff;
 using System.Text.Json;
 
@@ -84,12 +83,12 @@ namespace CSLibrary
                                                                                         x => x.PortQR2Name,
                                                                                         x => x.PointIdentifier);
 
-            if (!validationEmptyStrings.IsSuccses)
+            if (!validationEmptyStrings.IsSuccess)
                 Logger.Instance.Log(validationEmptyStrings.MessageBuilder.ToString(), LogLevel.Error);
 
             var stringsLengthValidation = Validation.AllStringsEquals(16, instance.FNNumbers);
 
-            if (!stringsLengthValidation.IsSuccses)
+            if (!stringsLengthValidation.IsSuccess)
                 Logger.Instance.Log(stringsLengthValidation.MessageBuilder.ToString(), LogLevel.Error);
 
             var moreThanOneSamePortNames = Validation.StringsCountMoreThanOne(instance.PortInputName,
@@ -102,9 +101,6 @@ namespace CSLibrary
 
             var dbConnectionStringNotValid = instance.DbConnectionString.TrustedConnection == true
                                             && !string.IsNullOrEmpty(instance.DbConnectionString.User);
-
-            //if (!validationEmptyStrings.IsSuccses || !stringsLengthValidation.IsSuccses || moreThanOneSamePortNames)
-            //    Environment.Exit(1);
 
             if (instance.FNNumbers.Count == 0)
                 Logger.Instance.Log($"Не обнаружены номера FN ({nameof(instance.FNNumbers)})", LogLevel.Warn);

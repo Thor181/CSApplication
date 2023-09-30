@@ -7,17 +7,15 @@
              xmlns:converters="clr-namespace:СSApp.Converters"
              mc:Ignorable="d"
              d:DesignHeight="450"
-             d:DesignWidth="800"
-             >
-    <!--<UserControl.DataContext>
-        <local:LineControlViewModel LineModel="{Binding}" />
-    </UserControl.DataContext>-->
+             d:DesignWidth="800">
     <UserControl.Resources>
         <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter" />
     </UserControl.Resources>
-    <!--Background="{Binding LogLevel, Converter={StaticResource LogLevelToColorConverter}}"-->
-    <Grid >
+    <Grid>
         <TextBlock Text="{Binding Line}"
-                   Foreground="{Binding LogLevel, Converter={StaticResource LogLevelToColorConverter}}" FontWeight="Bold"></TextBlock>
+                   Foreground="{Binding LogLevel, Converter={StaticResource LogLevelToColorConverter}}"
+                   FontWeight="Bold"
+                   TextWrapping="WrapWithOverflow" TextTrimming="WordEllipsis"/>
+        
     </Grid>
 </UserControl>

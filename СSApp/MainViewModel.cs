@@ -3,17 +3,10 @@ using CSLibrary.Data.Logic;
 using CSLibrary.Data.Models;
 using CSLibrary.Log;
 using CSLibrary.Stuff;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO.Ports;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 using СSApp.Models;
 using СSApp.Stuff;
 
@@ -46,7 +39,18 @@ namespace СSApp
 
             InitializePorts();
 
+            InitializeDatabaseValues();
+
             InitializePersistentValus();
+        }
+
+        private void InitializeDatabaseValues()
+        {
+            using var initializationLogic = new InitializationLogic();
+            var result = initializationLogic.InitializePayTypes();
+            var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
+
+            Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
         }
 
         private void InitializePorts()
@@ -56,7 +60,11 @@ namespace СSApp
 
             _portsActions = new()
             {
-                { AppConfig.Instance.PortInputName, InputPortDataReceived }
+                { AppConfig.Instance.PortInputName, InputOutputPortDataReceived },
+                { AppConfig.Instance.PortOutputName, InputOutputPortDataReceived },
+                { AppConfig.Instance.PortQR1Name, QRPortDataReceived },
+                { AppConfig.Instance.PortQR2Name, QRPortDataReceived }
+
             };
 
             PortWorker.PortDataReceived += (SerialPort port, string data) => { _portsActions[port.PortName].Invoke(port, data); };
@@ -72,7 +80,7 @@ namespace СSApp
             Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
         }
 
-        private void InputPortDataReceived(SerialPort port, string data)
+        private void InputOutputPortDataReceived(SerialPort port, string data)
         {
             using var userLogic = new UserLogic();
 
@@ -102,9 +110,15 @@ namespace СSApp
                 return;
             }
 
-            if ((port.PortName == AppConfig.Instance.PortInputName && entity.PlaceId == PersistentValues.OutTerritoryPlace?.Id)
-                || (port.PortName == AppConfig.Instance.PortOutputName && entity.PlaceId == PersistentValues.AtTerritoryPlace?.Id))
+            if (port.PortName == AppConfig.Instance.PortInputName && entity.PlaceId == PersistentValues.OutTerritoryPlace?.Id)
             {
+                Logger.Instance.Log($"Порт - вход, место - {Constants.OutTerritoryPlaceName}", LogLevel.Info);
+                PortWorker.SendHexResponse(port, PortWorker.x06);
+                WriteCardEvent(entity, port.PortName);
+            }
+            else if (port.PortName == AppConfig.Instance.PortOutputName && entity.PlaceId == PersistentValues.AtTerritoryPlace?.Id)
+            {
+                Logger.Instance.Log($"Порт - выход, место - {Constants.AtTerritoryPlaceName}", LogLevel.Info);
                 PortWorker.SendHexResponse(port, PortWorker.x06);
                 WriteCardEvent(entity, port.PortName);
             }
@@ -112,29 +126,99 @@ namespace СSApp
             {
                 if (entity.Staff)
                 {
+                    Logger.Instance.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) является сотрудником", LogLevel.Success);
                     PortWorker.SendHexResponse(port, PortWorker.x06);
                     WriteCardEvent(entity, port.PortName);
                 }
                 else
                 {
+                    Logger.Instance.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) не является сотрудником", LogLevel.Warn);
                     PortWorker.SendHexResponse(port, PortWorker.x34);
                 }
             }
+        }
 
+        private void QRPortDataReceived(SerialPort readablePort, string data)
+        {
+            var dataInterpreter = new DataInterpreter() { Data = data };
+            var date = dataInterpreter.GetDate();
+
+            var isTodayDate = DateTime.Today.Date == date.Date;
+            if (!isTodayDate)
+            {
+                Logger.Instance.Log($"Дата в QR-коде ({date.Date.Date}) отличается от текущей", LogLevel.Warn);
+                SendQRResponse(readablePort, PortWorker.x41);
+            }
+            else
+            {
+                var fnNumber = dataInterpreter.GetFNNumber();
+                var isFNExists = AppConfig.Instance.FNNumbers.Contains(fnNumber);
+                if (!isFNExists)
+                {
+                    Logger.Instance.Log($"Номер ФН ({fnNumber}) отсутствует в конфиге", LogLevel.Warn);
+                    SendQRResponse(readablePort, PortWorker.x42);
+                }
+                else
+                {
+                    var fpNumber = dataInterpreter.GetFPNumber();
+
+                    var type = readablePort.PortName == AppConfig.Instance.PortQR1Name ? PersistentValues.Entrance : PersistentValues.Exit;
+                    var typeId = type.Id;
+
+                    using var qrEventLogic = new QREventLogic();
+                    var result = qrEventLogic.Get<Qrevent>(x => x.Fp == fpNumber && x.Dt.Date == DateTime.Today.Date && x.TypeId == typeId);
+
+                    if (!result.IsSuccess)
+                    {
+                        Logger.Instance.Log(result.MessageBuilder.ToString(), LogLevel.Error);
+                        return;
+                    }
+
+                    var todayQREvents = result.Entity?.ToList();
+
+                    if (todayQREvents != null && todayQREvents.Any())
+                    {
+                        Logger.Instance.Log($"В базе уже присутствуют записи с номером ФП {fpNumber}, текущего дня и типом {type.Name}", LogLevel.Warn);
+                        SendQRResponse(readablePort, PortWorker.x43);
+                    }
+                    else
+                    {
+                        var sum = dataInterpreter.GetSum();
+                        SendQRResponse(readablePort, PortWorker.x06);
+                        WriteQREvent(typeId, sum, fnNumber, fpNumber);
+                    }
+                }
+            }
+        }
+
+        private void SendQRResponse(SerialPort readablePort, byte response)
+        {
+            if (readablePort.PortName == AppConfig.Instance.PortQR1Name)
+                PortWorker.SendHexResponse(PortWorker.InputPort, response);
+            else if (readablePort.PortName == AppConfig.Instance.PortQR2Name)
+                PortWorker.SendHexResponse(PortWorker.OutputPort, response);
         }
 
         private void WriteCardEvent(User user, string portName)
         {
             using var cardEventLogic = new CardEventLogic();
 
-            var cardEvent = new CardEvent();
-            cardEvent.Dt = DateTime.Now;
-            cardEvent.TypeId = portName == AppConfig.Instance.PortInputName ? PersistentValues.Entrance.Id : PersistentValues.Exit.Id;
-            cardEvent.PointId = PersistentValues.Point.Id;
-            cardEvent.Card = user.Card;
+            var typeId = portName == AppConfig.Instance.PortInputName ? PersistentValues.Entrance.Id : PersistentValues.Exit.Id;
+            var pointId = PersistentValues.Point.Id;
 
-            cardEventLogic.Add(cardEvent);
+            var result = cardEventLogic.WriteCardEvent(typeId, pointId, user.Card);
 
+            var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
+            Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
+        }
+
+        private void WriteQREvent(int typeId, decimal sum, string fn, string fp)
+        {
+            using var qrEventLogic = new QREventLogic();
+            var result = qrEventLogic.WriteQREvent(typeId, sum, fn, fp, PersistentValues.Point.Id, PersistentValues.EmptyPayType.Id);
+
+            var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
+            Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
         }
 
         private void LoggerInternal_MessageReceived(string message, CSLibrary.Log.LogLevel logLevel, Exception e = null)
@@ -152,6 +236,5 @@ namespace СSApp
         {
             CollectionChanged?.Invoke(this, e);
         }
-
     }
 }
