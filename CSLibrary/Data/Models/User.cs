@@ -3,32 +3,33 @@ using CSLibrary.Stuff;
 using System;
 using System.Collections.Generic;
 
-namespace CSLibrary.Data.Models;
-
-[LocalizedName("Пользователь")]
-public partial class User : IDbEntity
+namespace CSLibrary.Data.Models
 {
-    public Guid Id { get; set; }
+    [LocalizedName("Пользователь")]
+    public partial class User : IDbEntity
+    {
+        public Guid Id { get; set; }
 
-    public string Name { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
-    public string Name2 { get; set; } = null!;
+        public string Name2 { get; set; } = null!;
 
-    public string Surname { get; set; } = null!;
+        public string Surname { get; set; } = null!;
 
-    public string Card { get; set; } = null!;
+        public string Card { get; set; } = null!;
 
-    public string Id1 { get; set; } = null!;
+        public string Id1 { get; set; } = null!;
 
-    public string Id2 { get; set; } = null!;
+        public string Id2 { get; set; } = null!;
 
-    public DateTime Before { get; set; }
+        public DateTime Before { get; set; }
 
-    public int PlaceId { get; set; }
+        public int PlaceId { get; set; }
 
-    public bool Staff { get; set; }
+        public bool Staff { get; set; }
 
-    public DateTime Dt { get; set; }
+        public DateTime Dt { get; set; }
 
-    public virtual Place Place { get; set; } = null!;
+        public virtual Place Place { get; set; } = null!;
+    }
 }

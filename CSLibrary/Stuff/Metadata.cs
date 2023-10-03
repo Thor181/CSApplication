@@ -1,4 +1,7 @@
-﻿namespace CSLibrary.Stuff
+﻿using System;
+using System.Linq;
+
+namespace CSLibrary.Stuff
 {
     public class Metadata
     {

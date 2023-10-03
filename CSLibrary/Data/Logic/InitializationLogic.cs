@@ -1,6 +1,7 @@
 ﻿using CSLibrary.Data.Interfaces;
 using CSLibrary.Data.Models;
 using CSLibrary.Stuff.Results;
+using System.Linq;
 
 namespace CSLibrary.Data.Logic
 {

@@ -1,4 +1,6 @@
 ﻿using CSLibrary.Stuff;
+using System;
+using System.IO;
 
 namespace CSLibrary.Log
 {

@@ -1,4 +1,7 @@
-﻿namespace CSLibrary.Stuff
+﻿using System;
+using System.IO;
+
+namespace CSLibrary.Stuff
 {
     public class Constants
     {

@@ -1,4 +1,6 @@
-﻿namespace CSLibrary.Stuff
+﻿using System;
+
+namespace CSLibrary.Stuff
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class LocalizedNameAttribute : Attribute

@@ -3,10 +3,13 @@ using CSLibrary.Data.Logic;
 using CSLibrary.Data.Models;
 using CSLibrary.Log;
 using CSLibrary.Stuff;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO.Ports;
+using System.Linq;
 using СSApp.Models;
 using СSApp.Stuff;
 
@@ -29,7 +32,7 @@ namespace СSApp
 
         public MainViewModel()
         {
-            MessagesCollection = new();
+            MessagesCollection = new ObservableCollection<LineModel>();
             MessagesCollection.CollectionChanged += OnCollectionChanged;
 
             LoggerInternal = new LoggerWpf();
@@ -58,7 +61,7 @@ namespace СSApp
             PortWorker = new PortWorker();
             PortWorker.OpenPorts();
 
-            _portsActions = new()
+            _portsActions = new Dictionary<string, Action<SerialPort, string>>()
             {
                 { AppConfig.Instance.PortInputName, InputOutputPortDataReceived },
                 { AppConfig.Instance.PortOutputName, InputOutputPortDataReceived },
@@ -78,6 +81,7 @@ namespace СSApp
 
             var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
             Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
+
         }
 
         private void InputOutputPortDataReceived(SerialPort port, string data)

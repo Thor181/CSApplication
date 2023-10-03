@@ -1,4 +1,5 @@
 ﻿using CSLibrary.Log;
+using System;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Data;

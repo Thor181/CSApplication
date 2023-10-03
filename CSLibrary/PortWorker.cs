@@ -1,4 +1,5 @@
 ﻿using CSLibrary.Log;
+using System;
 using System.IO.Ports;
 
 namespace CSLibrary
@@ -104,7 +105,7 @@ namespace CSLibrary
             try
             {
                 serialPort.Write(new byte[] { data }, 0, 1);
-                Logger.Instance.Log($"-> Отправлено ({serialPort.PortName}): 0x{Convert.ToHexString(new byte[] { data })}", LogLevel.Info);
+                Logger.Instance.Log($"-> Отправлено ({serialPort.PortName}): 0x{PortWorker.ToHexString(data)}", LogLevel.Info);
             }
             catch (InvalidOperationException e)
             {
@@ -115,6 +116,11 @@ namespace CSLibrary
             {
                 Logger.Instance.Log($"При отправке ответа на порт {serialPort.PortName} возникла ошибка", LogLevel.Error, e);
             }
+        }
+
+        public static string ToHexString(byte data)
+        {
+            return BitConverter.ToString(new byte[] { data });
         }
     }
 }

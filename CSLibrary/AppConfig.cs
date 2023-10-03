@@ -1,5 +1,7 @@
 ﻿using CSLibrary.Log;
 using CSLibrary.Stuff;
+using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 
 namespace CSLibrary
@@ -32,6 +34,10 @@ namespace CSLibrary
 
         public void Initialize()
         {
+            Logger.Instance.Log("Добрый день! Прошу связаться со мной в телеграме: t.me/artemthor1", LogLevel.Error);
+            Logger.Instance.Log("Добрый день! Прошу связаться со мной в телеграме: t.me/artemthor1", LogLevel.Error);
+            Logger.Instance.Log("Добрый день! Прошу связаться со мной в телеграме: t.me/artemthor1", LogLevel.Error);
+
             CheckDirectoryExist();
             CheckFileExist();
 

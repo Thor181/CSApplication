@@ -1,4 +1,7 @@
-﻿namespace CSLibrary.Stuff
+﻿using System;
+using System.Collections.Generic;
+
+namespace CSLibrary.Stuff
 {
     public class DataInterpreter
     {
@@ -9,7 +12,7 @@
             set { _data = value; ParseData(); }
         }
 
-        private Dictionary<string, string> _keyValus = new();
+        private Dictionary<string, string> _keyValus = new Dictionary<string, string>();
 
         private const string TimeKey = "t";
         private const string SumKey = "s";
