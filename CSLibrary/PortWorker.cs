@@ -23,6 +23,8 @@ namespace CSLibrary
         public const int x43 = 0x43;
 
         private readonly int _baudRate = 9600;
+        private readonly int _qrBaudRate = 115200;
+
         private readonly Parity _parity = Parity.None;
         private readonly int _dataBits = 8;
 
@@ -38,11 +40,11 @@ namespace CSLibrary
                 OutputPort.DataReceived += PortDataReceivedInternal;
                 OutputPort.ErrorReceived += PortErrorReceivedInternal;
 
-                QR1Port = new SerialPort(AppConfig.Instance.PortQR1Name, _baudRate, _parity, _dataBits);
+                QR1Port = new SerialPort(AppConfig.Instance.PortQR1Name, _qrBaudRate, _parity, _dataBits);
                 QR1Port.DataReceived += PortDataReceivedInternal;
                 QR1Port.ErrorReceived += PortErrorReceivedInternal;
 
-                QR2Port = new SerialPort(AppConfig.Instance.PortQR2Name, _baudRate, _parity, _dataBits);
+                QR2Port = new SerialPort(AppConfig.Instance.PortQR2Name, _qrBaudRate, _parity, _dataBits);
                 QR2Port.DataReceived += PortDataReceivedInternal;
                 QR2Port.ErrorReceived += PortErrorReceivedInternal;
 
@@ -75,6 +77,7 @@ namespace CSLibrary
             var port = (SerialPort)sender;
             try
             {
+                Thread.Sleep(100);
                 var data = port.ReadExisting();
                 Logger.Instance.Log($"<- Получено ({port.PortName}): {data}", LogLevel.Info);
 

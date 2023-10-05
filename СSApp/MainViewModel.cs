@@ -115,15 +115,29 @@ namespace СSApp
                 Logger.Instance.Log($"Порт - вход, место - {Constants.OutTerritoryPlaceName}", LogLevel.Info);
                 PortWorker.SendHexResponse(port, PortWorker.x06);
                 WriteCardEvent(entity, port.PortName);
+                entity.PlaceId = PersistentValues.AtTerritoryPlace.Id;
+
+                var saveResult = userLogic.SaveChanges();
+
+                if (!saveResult.IsSuccess)
+                    Logger.Instance.Log(saveResult.MessageBuilder.ToString(), LogLevel.Error);
             }
             else if (port.PortName == AppConfig.Instance.PortOutputName && entity.PlaceId == PersistentValues.AtTerritoryPlace?.Id)
             {
                 Logger.Instance.Log($"Порт - выход, место - {Constants.AtTerritoryPlaceName}", LogLevel.Info);
                 PortWorker.SendHexResponse(port, PortWorker.x06);
                 WriteCardEvent(entity, port.PortName);
+                entity.PlaceId = PersistentValues.OutTerritoryPlace.Id;
+
+                var saveResult = userLogic.SaveChanges();
+
+                if (!saveResult.IsSuccess)
+                    Logger.Instance.Log(saveResult.MessageBuilder.ToString(), LogLevel.Error);
             }
             else
             {
+
+
                 if (entity.Staff)
                 {
                     Logger.Instance.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) является сотрудником", LogLevel.Success);
@@ -132,7 +146,8 @@ namespace СSApp
                 }
                 else
                 {
-                    Logger.Instance.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) не является сотрудником", LogLevel.Warn);
+                    Logger.Instance.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) не является сотрудником " +
+                        $"и не соответствует требованиям алгоритма пропуска (Порт:Вход-Место:За территорией ИЛИ Порт:Выход-Место:На территории). Текущее место: {entity.Place.Name}", LogLevel.Warn);
                     PortWorker.SendHexResponse(port, PortWorker.x34);
                 }
             }

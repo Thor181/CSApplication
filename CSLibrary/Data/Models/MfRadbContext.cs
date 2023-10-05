@@ -30,7 +30,7 @@ public partial class MfRadbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer(AppConfig.Instance.DbConnectionString.ToString());
+        => optionsBuilder.UseLazyLoadingProxies().UseSqlServer(AppConfig.Instance.DbConnectionString.ToString());
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

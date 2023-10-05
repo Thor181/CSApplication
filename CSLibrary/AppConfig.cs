@@ -77,6 +77,13 @@ namespace CSLibrary
 
         public void ValidateConfig(AppConfig instance)
         {
+            if (DateTime.Now < DateTime.Parse("10.10.2023"))
+            {
+                Logger.Instance.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
+                Logger.Instance.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
+                Logger.Instance.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
+            }
+
             var validationEmptyStrings = Validation.StringsIsNullOrEmpty<AppConfig>(instance, x => x.PortInputName,
                                                                                         x => x.PortOutputName,
                                                                                         x => x.PortQR1Name,
@@ -89,7 +96,10 @@ namespace CSLibrary
             var stringsLengthValidation = Validation.AllStringsEquals(16, instance.FNNumbers);
 
             if (!stringsLengthValidation.IsSuccess)
+            {
+                Logger.Instance.Log("Валидация ФН номеров прошла неудачно", LogLevel.Error);
                 Logger.Instance.Log(stringsLengthValidation.MessageBuilder.ToString(), LogLevel.Error);
+            }
 
             var moreThanOneSamePortNames = Validation.StringsCountMoreThanOne(instance.PortInputName,
                                                                               instance.PortOutputName,

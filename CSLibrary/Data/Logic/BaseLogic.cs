@@ -65,6 +65,24 @@ namespace CSLibrary.Data.Logic
             return result;
         }
 
+        public virtual BaseResult SaveChanges()
+        {
+            var result = new BaseResult();
+
+            try
+            {
+                _dbContext.SaveChanges();
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.MessageBuilder.AppendLine(e.Message);
+            }
+
+            return result;
+        }
+
         #region Dispose
         public void Dispose()
         {
