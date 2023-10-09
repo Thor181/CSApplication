@@ -136,8 +136,6 @@ namespace СSApp
             }
             else
             {
-
-
                 if (entity.Staff)
                 {
                     Logger.Instance.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) является сотрудником", LogLevel.Success);
