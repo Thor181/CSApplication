@@ -1,0 +1,42 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CSApp.V2a.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Class="CSApp.V2a.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="CSApp.V2a"
+		Height="1200"
+		Width="800"
+		WindowState="FullScreen"
+		CanResize="False"
+		>
+
+	<Window.Styles>
+		<Style Selector="TextBlock" >
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Style Selector="^.35">
+				<Setter Property="FontSize" Value="35"/>
+			</Style>
+		</Style>
+	</Window.Styles>
+	
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:MainWindowViewModel/>
+	</Design.DataContext>
+	
+	
+
+	<Grid RowDefinitions="120 *">
+		<Grid >
+			<TextBlock Text="{Binding CurrentDate}"
+					   FontSize="35"/>
+		</Grid>
+	</Grid>
+
+</Window>
