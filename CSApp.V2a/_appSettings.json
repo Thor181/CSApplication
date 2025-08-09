@@ -7,10 +7,27 @@
 	},
 	"UI": {
 		"HelloMessage": "Добро пожаловать",
-		"TextColor":  "#000000",
+		"TextColor": "#000000",
 		"MainColor": "#f7f7f7",
 		"ErrorColor": "#b55151",
 		"SuccessColor": "#51b562",
 		"SecondsToClear": 2
+	},
+	"PortWorker": {
+		"PortInputName": "COM2",
+		"PortOutputName": "COM3",
+		"PortQR1Name": "COM4",
+		"PortQR2Name": "COM5",
+		"PointIdentifier": "КПП1",
+		"FNNumbers": [ "9960440302516115" ]
+	},
+	"DbConnection": {
+		"Server": "localhost",
+		"Port": 1433,
+		"Database": "MfRADb",
+		"User": "",
+		"Password": "",
+		"TrustedConnection": true,
+		"Encrypt": false
 	}
 }   
