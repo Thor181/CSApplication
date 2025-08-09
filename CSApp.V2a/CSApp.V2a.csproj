@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CSLibrary\CSLibrary.csproj" />
+		<ProjectReference Include="..\CSLibrary.V2\CSLibrary.V2.csproj" />
 		<ProjectReference Include="..\CSSourceGenerator\CSSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 
