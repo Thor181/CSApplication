@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSApp.V2a", "CSApp.V2a\CSAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSSourceGenerator", "CSSourceGenerator\CSSourceGenerator.csproj", "{C815EC78-A903-479B-8FAA-09DA2E730735}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLibrary.V2", "CSLibrary.V2\CSLibrary.V2.csproj", "{AA0A2B63-A6AB-46DC-92D5-122784BC7A83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{C815EC78-A903-479B-8FAA-09DA2E730735}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C815EC78-A903-479B-8FAA-09DA2E730735}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C815EC78-A903-479B-8FAA-09DA2E730735}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA0A2B63-A6AB-46DC-92D5-122784BC7A83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA0A2B63-A6AB-46DC-92D5-122784BC7A83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA0A2B63-A6AB-46DC-92D5-122784BC7A83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA0A2B63-A6AB-46DC-92D5-122784BC7A83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
