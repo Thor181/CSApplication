@@ -10,7 +10,7 @@
         Title="CSApp.V2a"
 		Height="1200"
 		Width="800"
-		WindowState="FullScreen"
+		
 		CanResize="False"
 		>
 
@@ -18,24 +18,36 @@
 		<Style Selector="TextBlock" >
 			<Setter Property="HorizontalAlignment" Value="Center"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Style Selector="^.35">
+			<Setter Property="TextAlignment" Value="Center"/>
+			<Setter Property="TextWrapping" Value="Wrap"/>
+			<Setter Property="Foreground" Value="{Binding MainScreenService.TextColor}"/>
+			<Style Selector="^.font-35">
 				<Setter Property="FontSize" Value="35"/>
+			</Style>
+			<Style Selector="^.font-70">
+				<Setter Property="FontSize" Value="70"/>
 			</Style>
 		</Style>
 	</Window.Styles>
-	
+
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainWindowViewModel/>
 	</Design.DataContext>
-	
-	
 
-	<Grid RowDefinitions="120 *">
-		<Grid >
-			<TextBlock Text="{Binding CurrentDate}"
-					   FontSize="35"/>
+	<Grid RowDefinitions="120 *" Background="{Binding MainScreenService.CurrentColor, FallbackValue=#ffaaaa}" > 
+		<Grid Grid.Row="0" >
+			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+				<TextBlock Text="{Binding DateTime, StringFormat={}{0:dd.MM.yyyy}}" 
+						   Classes="font-35"/>
+				<TextBlock Text="{Binding DateTime, StringFormat={}{0:hh:mm:ss}}" 
+						   Classes="font-35"/>
+			</StackPanel>
+		</Grid>
+		<Grid Grid.Row="1" >
+			<TextBlock Text="{Binding MainScreenService.CurrentText, FallbackValue=Hello hello hello hello hello}" 
+					   Classes="font-70"/>
 		</Grid>
 	</Grid>
 

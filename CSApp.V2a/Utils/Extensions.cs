@@ -10,10 +10,5 @@ namespace CSApp.V2a.Utils
 {
     public static class Extensions
     {
-        extension(DateTime dateTime)
-        {
-            public DateOnly DateOnly => new DateOnly(dateTime.Year, dateTime.Month, dateTime.Day);
-            public TimeOnly TimeOnly => new TimeOnly(dateTime.Hour, dateTime.Minute, dateTime.Second);
-        }
     }
 }

@@ -1,0 +1,16 @@
+{
+	"Logging": {
+		"RootPath": "./",
+		"Folder": "Logs/",
+		"FileFormat": "CSApp_<counter>.log",
+		"MaxFileSize": 209715200
+	},
+	"UI": {
+		"HelloMessage": "Добро пожаловать",
+		"TextColor":  "#000000",
+		"MainColor": "#f7f7f7",
+		"ErrorColor": "#b55151",
+		"SuccessColor": "#51b562",
+		"SecondsToClear": 2
+	}
+}   

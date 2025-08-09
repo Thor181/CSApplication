@@ -9,6 +9,12 @@ namespace CSApp.V2a.Utils
 {
     public static class Constants
     {
-        public readonly static string MainFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MfRA", "CSApplication", "CSAppV2");
+        public static class Paths
+        {
+            public readonly static string MainFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MfRA", "CSApplication", "CSAppV2");
+        }
+
+        public const string AppName = "CSApp.V2a";
+        
     }
 }
