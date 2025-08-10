@@ -16,18 +16,13 @@ public partial class MfraDbContext : DbContext
     }
 
     public virtual DbSet<CardEvent> CardEvents { get; set; }
-
     public virtual DbSet<EventsType> EventsTypes { get; set; }
-
     public virtual DbSet<PayType> PayTypes { get; set; }
-
     public virtual DbSet<Place> Places { get; set; }
-
     public virtual DbSet<Point> Points { get; set; }
-
     public virtual DbSet<Qrevent> Qrevents { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<OperatorEvent> OperatorEvents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -125,6 +120,37 @@ public partial class MfraDbContext : DbContext
                 .HasForeignKey(d => d.PlaceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Users_Places");
+        });
+
+        modelBuilder.Entity<OperatorEvent>(entity =>
+        {
+            entity.ToTable("OperatorEvents");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Dt)
+                .IsRequired()
+                .HasDefaultValueSql("GETDATE()");
+
+            entity.Property(e => e.TypeId)
+                .IsRequired();
+
+            entity.Property(e => e.PointId)
+                .IsRequired();
+
+            entity.HasOne(e => e.Type)
+                .WithMany()
+                .HasForeignKey(e => e.TypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Point)
+                .WithMany()
+                .HasForeignKey(e => e.PointId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(e => e.Dt);
+            entity.HasIndex(e => e.TypeId);
+            entity.HasIndex(e => e.PointId);
         });
 
         OnModelCreatingPartial(modelBuilder);
