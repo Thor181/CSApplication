@@ -41,7 +41,7 @@
 			<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 				<TextBlock Text="{Binding DateTime, StringFormat={}{0:dd.MM.yyyy}}" 
 						   Classes="font-35"/>
-				<TextBlock Text="{Binding DateTime, StringFormat={}{0:hh:mm:ss}}" 
+				<TextBlock Text="{Binding DateTime, StringFormat={}{0:HH:mm:ss}}" 
 						   Classes="font-35"/>
 			</StackPanel>
 		</Grid>
