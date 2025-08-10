@@ -1,7 +1,9 @@
 ﻿
 
+using CSSourceGenerator.Stucts;
 using Microsoft.CodeAnalysis.Text;
 using System.Dynamic;
+using System.Linq;
 using System.Text;
 
 namespace CSSourceGenerator
@@ -21,10 +23,12 @@ namespace {ConfigurationAttributeNamespace}
     public class {ConfigurationAttributeName} : System.Attribute
     {{
         public readonly string Section;
+        public readonly string[] CustomConversion;        
 
-        public ConfigurationAttribute(string section)
+        public ConfigurationAttribute(string section, string[] customConversion = null)
         {{
             Section = section;
+            CustomConversion = customConversion;
         }}
     }}
 }}
@@ -36,7 +40,13 @@ namespace {ConfigurationAttributeNamespace}
 
             foreach (var item in sectionToGenerate.Propeties)
             {
-                sb.AppendLine($"\t\tpublic {item.Type} {item.Name} {{get; set;}}");
+                var customConversion = model.CustomConversion.FirstOrDefault(x => x.PropertyName == item.Name);
+                var type = item.Type;
+
+                if (customConversion != default && customConversion.Type != type)
+                    type = customConversion.Type;
+
+                sb.AppendLine($"\t\tpublic {type} {item.Name} {{get; set;}}");
             }
 
             return $@"

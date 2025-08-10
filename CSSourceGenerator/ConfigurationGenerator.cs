@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using CSSourceGenerator.Stucts;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
@@ -17,11 +18,6 @@ namespace CSSourceGenerator
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-#if DEBUG
-            if (!Debugger.IsAttached)
-                Debugger.Launch();
-#endif
-
             context.RegisterPostInitializationOutput(ctx =>
             {
                 ctx.AddSource("ConfigurationAttribute.g.cs", Code.SourceTextUtf8(Code.ConfigurationAttribute));
@@ -50,9 +46,6 @@ namespace CSSourceGenerator
                     var section = source.Right[0].Single(x => x.SectionName == configurationToGenerate.SectionName);
                     var sourceText = Code.SourceTextUtf8(Code.ConfigurationClass(configurationToGenerate, section));
                     context.AddSource($"{configurationToGenerate.Name}.g.cs", sourceText);
-
-                    //var t1 = string.Join("\n", source.Right[0]?.SelectMany(x => x.Propeties.Select(y => y.Name)).ToArray());
-                    //context.AddSource($"debug{configurationToGenerate.Name}.txt", "/*" + t1 + "*/");
                 }
             });
 
@@ -89,9 +82,18 @@ namespace CSSourceGenerator
                         if (attributeData.ConstructorArguments[0].Value is not string sectionName)
                             continue;
 
+                        CustomConversion[] customConversion = [];
+
+                        if (attributeData.ConstructorArguments.Length > 1)
+                        {
+                            var constructorArgument = attributeData.ConstructorArguments[1];
+                            if (constructorArgument.Values != null)
+                                customConversion = CustomConversion.FromStringArray(constructorArgument.Values.Where(x => !x.IsNull).Select(x => (string)x.Value)).ToArray();
+                        }
+
                         var classNamespace = classSymbol.ContainingNamespace.ToDisplayString();
 
-                        return new ConfigurationToGenerate(classNamespace, classSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat), sectionName);
+                        return new ConfigurationToGenerate(classNamespace, classSymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat), sectionName, customConversion) ;
                     }
                 }
             }
