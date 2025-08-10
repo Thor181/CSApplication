@@ -16,7 +16,9 @@ namespace CSApp.V2a.Services
         public void Load(string path, string name)
         {
             using var fs = new FileStream(path, FileMode.Open);
-            _players[name] = new SoundPlayer(fs);
+            var player = new SoundPlayer(fs);
+            player.Load();
+            _players[name] = player;
         }
 
         public void Load(Stream stream, string name)
@@ -26,6 +28,10 @@ namespace CSApp.V2a.Services
 
         public void Play(string name)
         {
+            var sound = _players[name];
+            if (!sound.IsLoadCompleted)
+                sound.Load();
+
             _players[name].Play();
         }
     }
