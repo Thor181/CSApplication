@@ -6,13 +6,12 @@
         mc:Ignorable="d"
         x:Class="CSApp.V2a.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/mfra.ico"
         Title="CSApp.V2a"
 		Height="1200"
 		Width="800"
-		
-		CanResize="False"
-		>
+		WindowState="FullScreen"
+		CanResize="False">
 
 	<Window.Styles>
 		<Style Selector="TextBlock" >
