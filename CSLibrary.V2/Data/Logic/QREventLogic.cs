@@ -5,6 +5,10 @@ namespace CSLibrary.V2.Data.Logic
 {
     public class QREventLogic : BaseLogic
     {
+        public QREventLogic(MfraDbContext dbContext) : base(dbContext)
+        {
+        }
+
         public BaseResult WriteQREvent(int typeId, decimal sum, string fn, string fp, int pointId, int payType)
         {
             var qrEvent = new Qrevent

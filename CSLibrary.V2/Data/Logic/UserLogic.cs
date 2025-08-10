@@ -5,6 +5,10 @@ namespace CSLibrary.V2.Data.Logic
 {
     public class UserLogic : BaseLogic
     {
+        public UserLogic(MfraDbContext dbContext) : base(dbContext)
+        {
+        }
+
         public DbResult<User> FindUserByCardNumber(string cardNumber)
         {
             var result = new DbResult<User>();

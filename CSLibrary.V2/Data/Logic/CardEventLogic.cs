@@ -5,6 +5,9 @@ namespace CSLibrary.V2.Data.Logic
 {
     public class CardEventLogic : BaseLogic
     {
+        public CardEventLogic(MfraDbContext dbContext) : base(dbContext)
+        {
+        }
 
         public BaseResult WriteCardEvent(int typeId, int pointId, string card)
         {

@@ -6,6 +6,10 @@ namespace CSLibrary.V2.Data.Logic
 {
     public class InitializationLogic : BaseLogic
     {
+        public InitializationLogic(MfraDbContext dbContext) : base(dbContext)
+        {
+        }
+
         public BaseResult InitializePayTypes()
         {
             var result = InitializeEntity(new PayType() { Name = "-" });

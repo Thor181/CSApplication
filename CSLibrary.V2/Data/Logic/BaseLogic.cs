@@ -13,9 +13,9 @@ namespace CSLibrary.V2.Data.Logic
 
         public bool DbAvailable { get => DbContext.Database.CanConnect(); }
 
-        public BaseLogic()
+        public BaseLogic(MfraDbContext dbContext)
         {
-            DbContext = new MfraDbContext();
+            DbContext = dbContext;
         }
 
         public virtual DbResult<T> Add<T>(T entity) where T : class
