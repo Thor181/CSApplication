@@ -103,6 +103,18 @@ namespace CSApp.V2a.ViewModels
         private void InitializeDatabaseValues()
         {
             var initializationLogic = _serviceProvider.GetRequiredService<InitializationLogic>();
+            var operatorInitResult = initializationLogic.InitializeOperatorEventsIfNotExists();
+
+            if (!operatorInitResult.IsSuccess)
+            {
+                _logger.LogError("Инициализацияя базы данных завершена с ошибкой. Результат: {result}", operatorInitResult.MessageBuilder.ToString());
+                return;
+            }
+            else
+            {
+                _logger.LogInformation(operatorInitResult.MessageBuilder.ToString());
+            }
+
             var result = initializationLogic.InitializePayTypes();
 
             if (result.IsSuccess)
@@ -120,6 +132,25 @@ namespace CSApp.V2a.ViewModels
             var dataParsedAsInteger = int.TryParse(data, out var dataAsInteger);
             if (dataParsedAsInteger && (dataAsInteger is PortWorker.x01 or PortWorker.x02))
             {
+                var operatorLogic = _serviceProvider.GetRequiredService<OperatorEventLogic>();
+
+                int eventTypeId = -1;
+                if (dataAsInteger == PortWorker.x01)
+                    eventTypeId = _persistentValues.Entrance.Id;
+                else if (dataAsInteger == PortWorker.x02)
+                    eventTypeId = _persistentValues.Exit.Id;
+
+                var result = operatorLogic.WriteEvent(eventTypeId, _persistentValues.Point.Id);
+
+                if (!result.IsSuccess)
+                {
+                    _logger.LogError("Возникла ошибка при сохранении события оператора в базе данных. Результат: {result}", result.MessageBuilder.ToString());
+                    MainScreenService.Set("Проход запрещен", MainScreenService.Status.Error);
+                }
+                else
+                {
+                    MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
+                }
 
                 return;
             }
