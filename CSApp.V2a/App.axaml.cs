@@ -139,6 +139,7 @@ namespace CSApp.V2a
             services.AddTransient<InitializationLogic>();
             services.AddTransient<QREventLogic>();
             services.AddTransient<UserLogic>();
+            services.AddTransient<OperatorEventLogic>();
 
             return services;
         }
