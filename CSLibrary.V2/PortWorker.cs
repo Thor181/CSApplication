@@ -5,7 +5,30 @@ namespace CSLibrary.V2
 {
     public class PortWorker
     {
+        /// <summary>
+        /// Сигнал открытия от оператора
+        /// </summary>
+        public const int x01 = 0x01;
+
+        /// <summary>
+        /// Сигнал открытия от оператора
+        /// </summary>
+        public const int x02 = 0x02;
+
+        /// <summary>
+        /// Успех
+        /// </summary>
         public const int x06 = 0x06;
+
+        /// <summary>
+        /// Сумма (параметр s) с QR-кода меньше N2 и меньше N1
+        /// </summary>
+        public const int x07 = 0x07;
+
+        /// <summary>
+        /// Сумма (параметр s) с QR-кода меньше либо равно N2
+        /// </summary>
+        public const int x08 = 0x08;
         public const int x31 = 0x31;
         public const int x32 = 0x32;
         public const int x33 = 0x33;
