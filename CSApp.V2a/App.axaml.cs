@@ -9,7 +9,9 @@ using CSApp.V2a.Utils;
 using CSApp.V2a.ViewModels;
 using CSApp.V2a.Views;
 using CSLibrary.V2;
+using CSLibrary.V2.Data.Logic;
 using CSLibrary.V2.Data.Models;
+using CSLibrary.V2.Stuff;
 using Karambolo.Extensions.Logging.File;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -72,6 +74,11 @@ namespace CSApp.V2a
             services.Configure<UiOptions>(configuration.GetSection(UiOptions.Section));
             services.Configure<DbConnectionOptions>(configuration.GetSection(DbConnectionOptions.Section));
             services.Configure<PortWorkerOptions>(configuration.GetSection(PortWorkerOptions.Section));
+            services.AddScoped<IPortWorkerOptions>((serviceProvider) =>
+            {
+                var options = serviceProvider.GetRequiredService<IOptions<PortWorkerOptions>>();
+                return options.Value;
+            });
 
             services.AddDbContext<MfraDbContext>((serviceProvider, builder) =>
             {
@@ -114,7 +121,7 @@ namespace CSApp.V2a
                             MaxFileSize = loggingOptions.MaxFileSize
                         }];
                     });
-                }).CreateLogger(Constants.AppName);
+                }).CreateLogger(Utils.Constants.AppName);
 
                 return logger;
             });
@@ -123,7 +130,15 @@ namespace CSApp.V2a
             services.AddScoped<MainScreenService>();
             services.AddScoped<AudioPlayer>();
             services.AddScoped<PortWorker>();
-
+            services.AddScoped<PersistentValues>();
+            services.AddTransient<CardEventLogic>();
+            services.AddTransient<HelperEntityLogic<Place>>();
+            services.AddTransient<HelperEntityLogic<EventsType>>();
+            services.AddTransient<HelperEntityLogic<CSLibrary.V2.Data.Models.Point>>();
+            services.AddTransient<HelperEntityLogic<PayType>>();
+            services.AddTransient<InitializationLogic>();
+            services.AddTransient<QREventLogic>();
+            services.AddTransient<UserLogic>();
 
             return services;
         }
