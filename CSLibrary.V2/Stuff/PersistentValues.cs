@@ -7,59 +7,69 @@ namespace CSLibrary.V2.Stuff
 {
     public class PersistentValues
     {
-        public Place? AtTerritoryPlace;
-        public Place? OutTerritoryPlace;
+        private readonly HelperEntityLogic<Place> _helperLogic;
+        private readonly HelperEntityLogic<EventsType> _typeHelperLogic;
+        private readonly HelperEntityLogic<Point> _pointHelperLogic;
+        private readonly HelperEntityLogic<PayType> _payTypeHelperLogic;
+        private readonly IPortWorkerOptions _portWorkerOptions;
 
-        public EventsType? Entrance;
-        public EventsType? Exit;
+        private Place? _atTerritoryPlace;
+        private Place? _outTerritoryPlace;
+        private EventsType? _entrance;
+        private EventsType? _exit;
+        private Point _point;
+        private PayType _emptyPayType;
 
-        public Point Point;
+        public Place? AtTerritoryPlace { get => _atTerritoryPlace; set => _atTerritoryPlace = value; }
+        public Place? OutTerritoryPlace { get => _outTerritoryPlace; set => _outTerritoryPlace = value; }
+        public EventsType? Entrance { get => _entrance; set => _entrance = value; }
+        public EventsType? Exit { get => _exit; set => _exit = value; }
+        public Point Point { get => _point; set => _point = value; }
+        public PayType EmptyPayType { get => _emptyPayType; set => _emptyPayType = value; }
 
-        public PayType EmptyPayType;
-
-        public PersistentValues()
+        public PersistentValues(HelperEntityLogic<Place> helperLogic, 
+            HelperEntityLogic<EventsType> typeHelperLogic, 
+            HelperEntityLogic<Point> pointHelperLogic, 
+            HelperEntityLogic<PayType> payTypeHelperLogic,
+            IPortWorkerOptions portWorkerOptions)
         {
-            
+            _helperLogic = helperLogic;
+            _typeHelperLogic = typeHelperLogic;
+            _pointHelperLogic = pointHelperLogic;
+            _payTypeHelperLogic = payTypeHelperLogic;
+            _portWorkerOptions = portWorkerOptions;
         }
 
         public BaseResult Initialize()
         {
             var result = new BaseResult();
 
-            using var helperLogic = new HelperEntityLogic<Place>();
-
-            result = InitializeInternal(helperLogic, ref AtTerritoryPlace!, Constants.AtTerritoryPlaceName);
+            result = InitializeInternal(_helperLogic, ref _atTerritoryPlace!, Constants.AtTerritoryPlaceName);
 
             if (!result.IsSuccess)
                 return result;
 
-            result = InitializeInternal(helperLogic, ref OutTerritoryPlace!, Constants.OutTerritoryPlaceName);
+            result = InitializeInternal(_helperLogic, ref _outTerritoryPlace!, Constants.OutTerritoryPlaceName);
 
             if (!result.IsSuccess)
                 return result;
 
-            using var typeHelperLogic = new HelperEntityLogic<EventsType>();
-
-            result = InitializeInternal(typeHelperLogic, ref Entrance!, Constants.EntranceTypeName);
+            result = InitializeInternal(_typeHelperLogic, ref _entrance!, Constants.EntranceTypeName);
 
             if (!result.IsSuccess)
                 return result;
 
-            result = InitializeInternal(typeHelperLogic, ref Exit!, Constants.ExitTypeName);
+            result = InitializeInternal(_typeHelperLogic, ref _exit!, Constants.ExitTypeName);
 
             if (!result.IsSuccess)
                 return result;
 
-            using var pointHelperLogic = new HelperEntityLogic<Point>();
-
-            result = InitializeInternal(pointHelperLogic, ref Point, AppConfig.Instance.PointIdentifier);
+            result = InitializeInternal(_pointHelperLogic, ref _point, _portWorkerOptions.PointIdentifier);
 
             if (!result.IsSuccess)
                 return result;
 
-            using var payTypeHelperLogic = new HelperEntityLogic<PayType>();
-
-            result = InitializeInternal(payTypeHelperLogic, ref EmptyPayType, Constants.EmptyPayType);
+            result = InitializeInternal(_payTypeHelperLogic, ref _emptyPayType, Constants.EmptyPayType);
 
             if (!result.IsSuccess)
                 return result;
@@ -68,7 +78,7 @@ namespace CSLibrary.V2.Stuff
             return result;
         }
 
-        private BaseResult InitializeInternal<T>(HelperEntityLogic<T> helperLogic, ref T initializableProp, string name) where T : class, IHelperEntity
+        private static BaseResult InitializeInternal<T>(HelperEntityLogic<T> helperLogic, ref T initializableProp, string name) where T : class, IHelperEntity
         {
             var result = new BaseResult();
 
