@@ -54,6 +54,13 @@
 
 	
 	<ItemGroup>
+	  <AvaloniaResource Update="Assets\mfra.ico">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </AvaloniaResource>
+	</ItemGroup>
+
+	
+	<ItemGroup>
 	  <None Update="Assets\Sounds\error.wav">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
