@@ -11,7 +11,7 @@
 		"MainColor": "#f7f7f7",
 		"ErrorColor": "#b55151",
 		"SuccessColor": "#51b562",
-		"SecondsToClear": 2
+		"SecondsToClear": 10
 	},
 	"PortWorker": {
 		"PortInputName": "COM2",

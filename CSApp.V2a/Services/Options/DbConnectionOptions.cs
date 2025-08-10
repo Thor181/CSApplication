@@ -11,5 +11,5 @@ namespace CSApp.V2a.Services.Options
     public partial class DbConnectionOptions
     {
         public const string Section = "DbConnection";
-    }
+    } 
 }
