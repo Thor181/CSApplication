@@ -12,6 +12,6 @@ namespace CSApp.V2a.Services.Options
     [Configuration(Section)]
     public partial class PortWorkerOptions : IPortWorkerOptions
     { 
-        public const string Section = "PortWorker";
+        public const string Section = "PortWorker"; 
     }
 }
