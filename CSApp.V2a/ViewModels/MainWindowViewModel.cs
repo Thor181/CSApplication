@@ -291,13 +291,13 @@ namespace CSApp.V2a.ViewModels
                         else if (_portWorkerOptions.N2 > sum && sum < _portWorkerOptions.N1)
                         {
                             SendQRResponse(readablePort, PortWorker.x07);
-                            MainScreenService.Set("Проход запрещен", MainScreenService.Status.Error);
+                            MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
                             return;
                         }
                         else if (sum <= _portWorkerOptions.N2)
                         {
                             SendQRResponse(readablePort, PortWorker.x08);
-                            MainScreenService.Set("Проход запрещен", MainScreenService.Status.Error);
+                            MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
                             return;
                         }
                     }
