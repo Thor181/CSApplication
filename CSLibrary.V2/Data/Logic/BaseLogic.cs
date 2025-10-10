@@ -92,7 +92,7 @@ namespace CSLibrary.V2.Data.Logic
 
         private void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
