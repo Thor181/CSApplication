@@ -26,10 +26,6 @@ namespace CSApp.V2a.ViewModels
         private readonly PortWorker _portWorker;
         private readonly PortWorkerOptions _portWorkerOptions;
         private readonly PersistentValues _persistentValues;
-        //private readonly InitializationLogic _initializationLogic;
-        //private readonly UserLogic _userLogic;
-        //private readonly CardEventLogic _cardEventLogic;
-        //private readonly QREventLogic _qrEventLogic;
 
         private Dictionary<string, Action<SerialPort, string>> _portsActions;
 
@@ -60,15 +56,10 @@ namespace CSApp.V2a.ViewModels
             _portWorker = portWorker;
             _portWorkerOptions = portWorkerOptions.Value;
             _persistentValues = persistentValues;
-            //_initializationLogic = initializationLogic;
-            //_userLogic = userLogic;
-            //_cardEventLogic = cardEventLogic;
-            //_qrEventLogic = qrEventLogic;
 
             InitializePorts();
             InitializePersistentValus();
             InitializeDatabaseValues();
-
         }
 
         private void InitializePorts()
@@ -102,7 +93,8 @@ namespace CSApp.V2a.ViewModels
 
         private void InitializeDatabaseValues()
         {
-            var initializationLogic = _serviceProvider.GetRequiredService<InitializationLogic>();
+            using var scope = _serviceProvider.CreateScope();
+            var initializationLogic = scope.ServiceProvider.GetRequiredService<InitializationLogic>();
             var operatorInitResult = initializationLogic.InitializeOperatorEventsIfNotExists();
 
             if (!operatorInitResult.IsSuccess)
@@ -132,7 +124,8 @@ namespace CSApp.V2a.ViewModels
             var dataParsedAsInteger = int.TryParse(data, out var dataAsInteger);
             if (dataParsedAsInteger && (dataAsInteger is PortWorker.x01 or PortWorker.x02))
             {
-                var operatorLogic = _serviceProvider.GetRequiredService<OperatorEventLogic>();
+                using var operatorScope = _serviceProvider.CreateScope();
+                var operatorLogic = operatorScope.ServiceProvider.GetRequiredService<OperatorEventLogic>();
 
                 int eventTypeId = -1;
                 if (dataAsInteger == PortWorker.x01)
@@ -141,7 +134,7 @@ namespace CSApp.V2a.ViewModels
                     eventTypeId = _persistentValues.Exit.Id;
 
                 var result = operatorLogic.WriteEvent(eventTypeId, _persistentValues.Point.Id);
-
+                
                 if (!result.IsSuccess)
                 {
                     _logger.LogError("Возникла ошибка при сохранении события оператора в базе данных. Результат: {result}", result.MessageBuilder.ToString());
@@ -155,7 +148,8 @@ namespace CSApp.V2a.ViewModels
                 return;
             }
 
-            var userLogic = _serviceProvider.GetRequiredService<UserLogic>();
+            using var scope = _serviceProvider.CreateScope();
+            var userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>();
             var findResult = userLogic.FindUserByCardNumber(data);
 
             if (!findResult.DbAvailable)
@@ -254,7 +248,8 @@ namespace CSApp.V2a.ViewModels
                     var type = readablePort.PortName == _portWorkerOptions.PortQR1Name ? _persistentValues.Entrance : _persistentValues.Exit;
                     var typeId = type.Id;
 
-                    var qrEventLogic = _serviceProvider.GetRequiredService<QREventLogic>();
+                    using var scope = _serviceProvider.CreateScope();
+                    var qrEventLogic = scope.ServiceProvider.GetRequiredService<QREventLogic>();
                     var result = qrEventLogic.Get<Qrevent>(x => x.Fp == fpNumber && x.Dt.Date == DateTime.Today.Date && x.TypeId == typeId);
 
                     if (!result.IsSuccess)
@@ -325,7 +320,8 @@ namespace CSApp.V2a.ViewModels
 
             user.PlaceId = placeId;
 
-            var userLogic = _serviceProvider.GetRequiredService<UserLogic>();
+            using var scope = _serviceProvider.CreateScope();
+            var userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>();
             var saveResult = userLogic.SaveChanges();
 
             if (!saveResult.IsSuccess)
@@ -346,7 +342,8 @@ namespace CSApp.V2a.ViewModels
             var typeId = portName == _portWorkerOptions.PortInputName ? _persistentValues.Entrance!.Id : _persistentValues.Exit!.Id;
             var pointId = _persistentValues.Point.Id;
 
-            var cardEventLogic = _serviceProvider.GetRequiredService<CardEventLogic>();
+            using var scope = _serviceProvider.CreateScope();
+            var cardEventLogic = scope.ServiceProvider.GetRequiredService<CardEventLogic>();
             var result = cardEventLogic.WriteCardEvent(typeId, pointId, user.Card);
 
             if (result.IsSuccess)
@@ -359,7 +356,8 @@ namespace CSApp.V2a.ViewModels
 
         private bool WriteQREvent(int typeId, decimal sum, string fn, string fp)
         {
-            var qrEventLogic = _serviceProvider.GetRequiredService<QREventLogic>();
+            using var scope = _serviceProvider.CreateScope();
+            var qrEventLogic = scope.ServiceProvider.GetRequiredService<QREventLogic>();
             var result = qrEventLogic.WriteQREvent(typeId, sum, fn, fp, _persistentValues.Point.Id, _persistentValues.EmptyPayType.Id);
 
             if (result.IsSuccess)
