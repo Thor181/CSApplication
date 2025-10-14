@@ -183,12 +183,12 @@ namespace CSApp.V2a.ViewModels
             if (port.PortName == _portWorkerOptions.PortInputName && entity.PlaceId == _persistentValues.OutTerritoryPlace?.Id)
             {
                 _logger.LogInformation("Порт - вход, место - {place}", CSLibrary.V2.Stuff.Constants.OutTerritoryPlaceName);
-                HandleUser(port, entity, _persistentValues.AtTerritoryPlace!.Id);
+                HandleUser(port, entity, userLogic, _persistentValues.AtTerritoryPlace!.Id);
             }
             else if (port.PortName == _portWorkerOptions.PortOutputName && entity.PlaceId == _persistentValues.AtTerritoryPlace?.Id)
             {
                 _logger.LogInformation("Порт - выход, место - {place}", CSLibrary.V2.Stuff.Constants.AtTerritoryPlaceName);
-                HandleUser(port, entity, _persistentValues.OutTerritoryPlace!.Id);
+                HandleUser(port, entity, userLogic, _persistentValues.OutTerritoryPlace!.Id);
             }
             else
             {
@@ -308,7 +308,7 @@ namespace CSApp.V2a.ViewModels
                 _portWorker.SendHexResponse(_portWorker.OutputPort, response);
         }
 
-        private void HandleUser(SerialPort port, User user, int placeId)
+        private void HandleUser(SerialPort port, User user, UserLogic userLogic, int placeId)
         {
             var eventIsSuccess = WriteCardEvent(user, port.PortName);
 
@@ -319,9 +319,7 @@ namespace CSApp.V2a.ViewModels
             }
 
             user.PlaceId = placeId;
-
-            using var scope = _serviceProvider.CreateScope();
-            var userLogic = scope.ServiceProvider.GetRequiredService<UserLogic>();
+            
             var saveResult = userLogic.SaveChanges();
 
             if (!saveResult.IsSuccess)
