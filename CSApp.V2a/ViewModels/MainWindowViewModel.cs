@@ -283,7 +283,7 @@ namespace CSApp.V2a.ViewModels
                             SendQRResponse(readablePort, PortWorker.x06);
                             MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
                         }
-                        else if (_portWorkerOptions.N2 > sum && sum < _portWorkerOptions.N1)
+                        else if (_portWorkerOptions.N2 < sum && sum < _portWorkerOptions.N1)
                         {
                             SendQRResponse(readablePort, PortWorker.x07);
                             MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
