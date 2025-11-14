@@ -270,29 +270,40 @@ namespace CSApp.V2a.ViewModels
                     {
                         var sum = dataInterpreter.GetSum();
 
+                        var isAllowed = false;
+
+                        var qrEventIsSuccess = WriteQREvent(typeId, sum, fnNumber, fpNumber);
+
+                        if (!qrEventIsSuccess)
+                        {
+                            MainScreenService.Set("Проход запрещен", MainScreenService.Status.Error);
+                            return;
+                        }
+
                         if (sum >= _portWorkerOptions.N1)
                         {
-                            var qrEventIsSuccess = WriteQREvent(typeId, sum, fnNumber, fpNumber);
-
-                            if (!qrEventIsSuccess)
-                            {
-                                MainScreenService.Set("Проход запрещен", MainScreenService.Status.Error);
-                                return;
-                            }
-
                             SendQRResponse(readablePort, PortWorker.x06);
-                            MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
                         }
                         else if (_portWorkerOptions.N2 < sum && sum < _portWorkerOptions.N1)
                         {
                             SendQRResponse(readablePort, PortWorker.x07);
-                            MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
-                            return;
                         }
                         else if (sum <= _portWorkerOptions.N2)
                         {
                             SendQRResponse(readablePort, PortWorker.x08);
+                        }
+
+                        if (isAllowed)
+                        {
                             MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
+                            return;
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Событие в базу данных было записано, но проход не разрешен. Возможно, параметр s не попал в следующие условия: " +
+                                $"1. s >= N1: {sum} >= {_portWorkerOptions.N1}\n" +
+                                $"2. N2 < s и s < N1: {_portWorkerOptions.N2} < {sum} и {sum} < {_portWorkerOptions.N1}\n" +
+                                $"3. s <= N2: {sum} <= {_portWorkerOptions.N2}");
                             return;
                         }
                     }

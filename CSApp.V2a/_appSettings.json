@@ -20,8 +20,8 @@
 		"PortQR2Name": "COM5",
 		"PointIdentifier": "КПП1",
 		"FNNumbers": [ "9960440302516115" ],
-		"N1": 23.00,
-		"N2":  77.00
+		"N1": 23,
+		"N2":  77
 	},
 	"DbConnection": {
 		"Server": "localhost",
