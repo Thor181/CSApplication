@@ -134,7 +134,7 @@ namespace CSApp.V2a.ViewModels
                     eventTypeId = _persistentValues.Exit.Id;
 
                 var result = operatorLogic.WriteEvent(eventTypeId, _persistentValues.Point.Id);
-                
+
                 if (!result.IsSuccess)
                 {
                     _logger.LogError("Возникла ошибка при сохранении события оператора в базе данных. Результат: {result}", result.MessageBuilder.ToString());
@@ -270,8 +270,6 @@ namespace CSApp.V2a.ViewModels
                     {
                         var sum = dataInterpreter.GetSum();
 
-                        var isAllowed = false;
-
                         var qrEventIsSuccess = WriteQREvent(typeId, sum, fnNumber, fpNumber);
 
                         if (!qrEventIsSuccess)
@@ -293,19 +291,7 @@ namespace CSApp.V2a.ViewModels
                             SendQRResponse(readablePort, PortWorker.x08);
                         }
 
-                        if (isAllowed)
-                        {
-                            MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
-                            return;
-                        }
-                        else
-                        {
-                            _logger.LogWarning("Событие в базу данных было записано, но проход не разрешен. Возможно, параметр s не попал в следующие условия: " +
-                                $"1. s >= N1: {sum} >= {_portWorkerOptions.N1}\n" +
-                                $"2. N2 < s и s < N1: {_portWorkerOptions.N2} < {sum} и {sum} < {_portWorkerOptions.N1}\n" +
-                                $"3. s <= N2: {sum} <= {_portWorkerOptions.N2}");
-                            return;
-                        }
+                        MainScreenService.Set("Проход разрешен", MainScreenService.Status.Success);
                     }
                 }
             }
@@ -330,7 +316,7 @@ namespace CSApp.V2a.ViewModels
             }
 
             user.PlaceId = placeId;
-            
+
             var saveResult = userLogic.SaveChanges();
 
             if (!saveResult.IsSuccess)
