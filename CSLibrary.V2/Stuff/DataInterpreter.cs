@@ -28,9 +28,10 @@
         
         public DateTime GetDate()
         {
-            var splitted = _keyValus[TimeKey].Split('T');
-            var date = splitted[0];
-            var time = splitted[1];
+            var asSpan = _keyValus[TimeKey].AsSpan();
+            var separatorIndex = asSpan.IndexOf('T');
+            var date = asSpan[..separatorIndex];
+            var time = asSpan[(separatorIndex + 1)..];
 
             var year = int.Parse(date[..4]);
             var month = int.Parse(date[4..6]);
@@ -38,8 +39,12 @@
 
             var hour = int.Parse(time[..2]);
             var minute = int.Parse(time[2..4]);
+            var second = 0;
 
-            return new DateTime(year, month, day, hour, minute, 0);
+            if (time.Length == 6)
+                second = int.Parse(time[4..6]);
+
+            return new DateTime(year, month, day, hour, minute, second);
         }
 
         public decimal GetSum() => decimal.Parse(_keyValus[SumKey].Replace('.', ','));
