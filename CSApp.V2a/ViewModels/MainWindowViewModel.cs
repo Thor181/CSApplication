@@ -1,4 +1,5 @@
-﻿using CSApp.V2a.Services;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CSApp.V2a.Services;
 using CSApp.V2a.Services.Options;
 using CSApp.V2a.Utils;
 using CSLibrary.V2;
@@ -29,8 +30,13 @@ namespace CSApp.V2a.ViewModels
 
         private Dictionary<string, Action<SerialPort, string>> _portsActions;
 
-        public DateTime DateTime { get => field; set => SetProperty(ref field, value); }
-        public MainScreenService MainScreenService { get => field; set => SetProperty(ref field, value); }
+        [ObservableProperty]
+        private DateTime _dateTime;
+
+        [ObservableProperty]
+        private MainScreenService _mainScreenService;
+        //public DateTime DateTime { get => field; set => SetProperty(ref field, value); }
+        //public MainScreenService MainScreenService { get => field; set => SetProperty(ref field, value); }
 
         //design mode
         public MainWindowViewModel()
