@@ -1,4 +1,5 @@
 {
+	"Path": "G:\\appSettings.json", //если путь указан, то настройки будут браться из указанного файла
 	"Logging": {
 		"RootPath": "./",
 		"Folder": "Logs/",
@@ -21,7 +22,7 @@
 		"PointIdentifier": "КПП1",
 		"FNNumbers": [ "9960440302516115" ],
 		"N1": 23,
-		"N2":  77
+		"N2": 77
 	},
 	"DbConnection": {
 		"Server": "localhost",
