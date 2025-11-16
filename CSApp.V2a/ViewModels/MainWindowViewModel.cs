@@ -80,7 +80,17 @@ namespace CSApp.V2a.ViewModels
                 { _portWorkerOptions.PortQR2Name, QRPortDataReceived }
             };
 
-            _portWorker.PortDataReceived += (port, data) => { _portsActions[port.PortName].Invoke(port, data); };
+            _portWorker.PortDataReceived += (port, data) =>
+            {
+                try
+                {
+                    _portsActions[port.PortName].Invoke(port, data);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Ошибка при обработке данных с порта {port}. Данные: {data}", port.PortName, data);
+                }
+            };
         }
 
         private void InitializePersistentValus()
@@ -250,7 +260,6 @@ namespace CSApp.V2a.ViewModels
                 else
                 {
                     var fpNumber = dataInterpreter.GetFPNumber();
-
                     var type = readablePort.PortName == _portWorkerOptions.PortQR1Name ? _persistentValues.Entrance : _persistentValues.Exit;
                     var typeId = type.Id;
 
@@ -266,9 +275,9 @@ namespace CSApp.V2a.ViewModels
 
                     var todayQREvents = result.Entity?.ToList();
 
-                    if (todayQREvents != null && todayQREvents.Count > 0)
+                    if (todayQREvents?.Count > 0 && (DateTime.Now - qrCodeDate).TotalMinutes > 30)
                     {
-                        _logger.LogWarning("В базе данных уже присутствуют записи с номером ФП {fp}, текущего дня и типов {type}", fpNumber, type.Name);
+                        _logger.LogWarning("В базе данных уже присутствуют записи с номером ФП {fp}, текущего дня и типом {type}", fpNumber, type.Name);
                         SendQRResponse(readablePort, PortWorker.x43);
                         MainScreenService.Set("Доступ запрещен", MainScreenService.Status.Error);
                     }
