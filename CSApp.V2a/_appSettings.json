@@ -1,5 +1,5 @@
 {
-	"Path": "G:\\appSettings.json", //если путь указан, то настройки будут браться из указанного файла
+	"Path": "G:\\appSettings.json",
 	"Logging": {
 		"RootPath": "./",
 		"Folder": "Logs/",

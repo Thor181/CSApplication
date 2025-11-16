@@ -41,11 +41,14 @@ namespace CSSourceGenerator
                 if (source.Left.IsEmpty)
                     return;
 
-                foreach (ConfigurationToGenerate configurationToGenerate in source.Left)
+                foreach (ConfigurationToGenerate? configurationToGenerate in source.Left)
                 {
-                    var section = source.Right[0].Single(x => x.SectionName == configurationToGenerate.SectionName);
-                    var sourceText = Code.SourceTextUtf8(Code.ConfigurationClass(configurationToGenerate, section));
-                    context.AddSource($"{configurationToGenerate.Name}.g.cs", sourceText);
+                    if (configurationToGenerate == null)
+                        continue;
+
+                    var section = source.Right[0].Single(x => x.SectionName == configurationToGenerate?.SectionName);
+                    var sourceText = Code.SourceTextUtf8(Code.ConfigurationClass(configurationToGenerate.Value, section));
+                    context.AddSource($"{configurationToGenerate?.Name}.g.cs", sourceText);
                 }
             });
 
@@ -88,7 +91,15 @@ namespace CSSourceGenerator
                         {
                             var constructorArgument = attributeData.ConstructorArguments[1];
                             if (constructorArgument.Values != null)
-                                customConversion = CustomConversion.FromStringArray(constructorArgument.Values.Where(x => !x.IsNull).Select(x => (string)x.Value)).ToArray();
+                            {
+                                customConversion = CustomConversion
+                                    .FromStringArray(
+                                        constructorArgument.Values
+                                            .Where(x => !x.IsNull && x.Value is string)
+                                            .Select(x => (string)x.Value!)
+                                    )
+                                    .ToArray();
+                            }
                         }
 
                         var classNamespace = classSymbol.ContainingNamespace.ToDisplayString();
@@ -103,9 +114,12 @@ namespace CSSourceGenerator
 
         private static IEnumerable<SectionToGenerate> TransformConfigurationFileToSection(AdditionalText additionalText)
         {
-            var text = additionalText.GetText().ToString();
+            var text = additionalText.GetText()?.ToString();
 
-            var root = JsonDocument.Parse(text).RootElement;
+            if (string.IsNullOrEmpty(text))
+                return [];
+
+            var root = JsonDocument.Parse(text!).RootElement;
             var sections = JsonParser.Traverse(root);
             return sections;
         }
