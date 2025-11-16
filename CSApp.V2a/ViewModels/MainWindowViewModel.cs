@@ -275,7 +275,9 @@ namespace CSApp.V2a.ViewModels
 
                     var todayQREvents = result.Entity?.ToList();
 
-                    if (todayQREvents?.Count > 0 && (DateTime.Now - qrCodeDate).TotalMinutes > 30)
+                    //var is30Minutes = (DateTime.Now - qrCodeDate).TotalMinutes > 30;
+
+                    if (todayQREvents?.Count > 0 /*&& is30Minutes*/)
                     {
                         _logger.LogWarning("В базе данных уже присутствуют записи с номером ФП {fp}, текущего дня и типом {type}", fpNumber, type.Name);
                         SendQRResponse(readablePort, PortWorker.x43);
