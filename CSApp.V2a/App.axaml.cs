@@ -67,7 +67,7 @@ namespace CSApp.V2a
 
         private static IServiceCollection ConfigureServices(IServiceCollection services)
         {
-            var configuration = new ConfigurationBuilder().AddCustomJsonFile().Build();
+            var configuration = new ConfigurationBuilder().AddJsonFile("C:\\settings\\_appSettings.json").Build();
 
             services.AddSingleton<IConfiguration>(configuration);
             services.Configure<LoggingOptions>(configuration.GetSection(LoggingOptions.Section));
