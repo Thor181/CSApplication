@@ -35,12 +35,12 @@ namespace CSApp.V2a.ViewModels
         //design mode
         public MainWindowViewModel()
         {
-            var timer = new System.Timers.Timer(900);
-            timer.Elapsed += (s, e) =>
-            {
-                DateTime = DateTime.Now;
-            };
-            timer.Start();
+            //var timer = new System.Timers.Timer(900);
+            //timer.Elapsed += (s, e) =>
+            //{
+            //    DateTime = DateTime.Now;
+            //};
+            //timer.Start();
         }
 
         public MainWindowViewModel(IServiceProvider serviceProvider,
