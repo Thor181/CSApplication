@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34112.27
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11310.294 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSLibrary", "CSLibrary\CSLibrary.csproj", "{439C5457-A751-4385-8CA3-4083E78EDEDA}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLibrary.V2", "CSLibrary.V2\CSLibrary.V2.csproj", "{AA0A2B63-A6AB-46DC-92D5-122784BC7A83}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSLibrary.Tests", "CSLibrary.Tests\CSLibrary.Tests.csproj", "{92A9D553-110D-4369-8840-A0D0742F1B66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSApp.LoadTest", "CSApp.LoadTest\CSApp.LoadTest.csproj", "{3D2CD19F-3A81-4EFB-992E-83B05A4C1136}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{92A9D553-110D-4369-8840-A0D0742F1B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92A9D553-110D-4369-8840-A0D0742F1B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92A9D553-110D-4369-8840-A0D0742F1B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D2CD19F-3A81-4EFB-992E-83B05A4C1136}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D2CD19F-3A81-4EFB-992E-83B05A4C1136}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D2CD19F-3A81-4EFB-992E-83B05A4C1136}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D2CD19F-3A81-4EFB-992E-83B05A4C1136}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
