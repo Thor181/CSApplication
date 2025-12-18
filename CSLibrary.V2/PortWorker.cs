@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.IO.Ports;
+using System.Text;
 
 namespace CSLibrary.V2
 {
@@ -67,18 +69,22 @@ namespace CSLibrary.V2
                 InputPort = new SerialPort(_options.PortInputName, _baudRate, _parity, _dataBits);
                 InputPort.DataReceived += PortDataReceivedInternal;
                 InputPort.ErrorReceived += PortErrorReceivedInternal;
+                InputPort.ReadTimeout = _options.PortInputReadTimeoutMs;
 
                 OutputPort = new SerialPort(_options.PortOutputName, _baudRate, _parity, _dataBits);
                 OutputPort.DataReceived += PortDataReceivedInternal;
                 OutputPort.ErrorReceived += PortErrorReceivedInternal;
+                OutputPort.ReadTimeout = _options.PortOutputReadTimeoutMs;
 
                 QR1Port = new SerialPort(_options.PortQR1Name, _qrBaudRate, _parity, _dataBits);
                 QR1Port.DataReceived += PortDataReceivedInternal;
                 QR1Port.ErrorReceived += PortErrorReceivedInternal;
+                QR1Port.ReadTimeout = _options.PortQR1ReadTimeoutMs;
 
                 QR2Port = new SerialPort(_options.PortQR2Name, _qrBaudRate, _parity, _dataBits);
                 QR2Port.DataReceived += PortDataReceivedInternal;
                 QR2Port.ErrorReceived += PortErrorReceivedInternal;
+                QR2Port.ReadTimeout = _options.PortQR2ReadTimeoutMs;
 
                 OpenPort(InputPort);
                 OpenPort(OutputPort);
@@ -107,23 +113,32 @@ namespace CSLibrary.V2
         private void PortDataReceivedInternal(object sender, SerialDataReceivedEventArgs e)
         {
             var port = (SerialPort)sender;
+            var bytes = new List<byte>(8);
             try
             {
-                Thread.Sleep(100);
-                var data = port.ReadExisting();
-                _logger.LogInformation("<- Получено ({port}): {data}", port.PortName, data);
+                int currentByte = -1;
 
-                PortDataReceived?.Invoke(port, data);
+                while ((currentByte = port.ReadByte()) != -1)
+                {
+                    bytes.Add((byte)currentByte);
+                }
+            }
+            catch (TimeoutException)
+            {
+                _logger.LogWarning($"Timeout exceed for reading data from port '{port.PortName}'");
             }
             catch (InvalidOperationException ex)
             {
                 _logger.LogError(ex, "Порт {port} не открыт", port.PortName);
-                OpenPort(port);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "При получении данных из порта {port} возникла ошибка", port.PortName);
             }
+
+            var data = Encoding.ASCII.GetString([.. bytes]);
+            Debug.WriteLine("<- Data received: " + data);
+            PortDataReceived?.Invoke(port, data);
         }
 
         private void PortErrorReceivedInternal(object sender, SerialErrorReceivedEventArgs e)
