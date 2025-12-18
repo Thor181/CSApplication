@@ -74,6 +74,7 @@ namespace CSApp.V2a
             services.Configure<UiOptions>(configuration.GetSection(UiOptions.Section));
             services.Configure<DbConnectionOptions>(configuration.GetSection(DbConnectionOptions.Section));
             services.Configure<PortWorkerOptions>(configuration.GetSection(PortWorkerOptions.Section));
+            //Регистрируем IPortWorkerOptions для внедрения зависимостей, т.к. используется в CSLibrary.V2 (который не имеет доступа до PortWorkerOptions)
             services.AddScoped<IPortWorkerOptions>((serviceProvider) =>
             {
                 var options = serviceProvider.GetRequiredService<IOptions<PortWorkerOptions>>();
