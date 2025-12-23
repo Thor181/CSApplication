@@ -1,0 +1,40 @@
+{
+	"Path": "",
+	"Logging": {
+		"RootPath": "./",
+		"Folder": "Logs/",
+		"FileFormat": "CSApp_<counter>.log",
+		"MaxFileSize": 209715200
+	},
+	"UI": {
+		"HelloMessage": "Добро пожаловать",
+		"TextColor": "#000000",
+		"MainColor": "#f7f7f7",
+		"ErrorColor": "#b55151",
+		"SuccessColor": "#51b562",
+		"SecondsToClear": 10
+	},
+	"PortWorker": {
+		"PortInputName": "COM2",
+		"PortInputReadTimeoutMs": 200,
+		"PortOutputName": "COM3", 
+		"PortOutputReadTimeoutMs": 200,
+		"PortQR1Name": "COM4",
+    "PortQR1ReadTimeoutMs": 200,
+		"PortQR2Name": "COM5",
+		"PortQR2ReadTimeoutMs": 200,
+		"PointIdentifier": "КПП1",
+		"FNNumbers": [ "9960440302516115" ],
+		"N1": 23,
+		"N2": 77
+	},
+	"DbConnection": {
+		"Server": "localhost",
+		"Port": 1433,
+		"Database": "MfRADb",
+		"User": "",
+		"Password": "",
+		"TrustedConnection": true,
+		"Encrypt": false
+	}
+}   

@@ -1,0 +1,82 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<Version>1.0.0-w</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Assets\mfra.ico" />
+	</ItemGroup>
+	<ItemGroup>
+		
+	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+	<PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.6.3" />
+	<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+	<PackageReference Include="Karambolo.Extensions.Logging.File" Version="3.6.3" />
+	<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
+	<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\CSLibrary.V2\CSLibrary.V2.csproj" />
+		<ProjectReference Include="..\CSSourceGenerator\CSSourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<!--И копировать файл-->
+		<None Update="_appSettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<!--И использовать его в анализаторе-->
+		<AdditionalFiles Include="_appSettings.json" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Resource Include="Assets\mfra.ico">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<AvaloniaResource Update="Assets\mfra.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</AvaloniaResource>
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<None Update="Assets\Sounds\error.wav">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Sounds\success.wav">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup>
+		<AvaloniaResource Update="Assets\mfra.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</AvaloniaResource>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Assets\Sounds\error.wav">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Sounds\success.wav">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

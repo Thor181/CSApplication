@@ -12,7 +12,7 @@ namespace CSSourceGenerator
     {
         public static SourceText SourceTextUtf8(string code) => SourceText.From(code, Encoding.UTF8);
 
-        public const string ConfigurationAttributeNamespace = "CSApp.V2a.Generated.Configuration";
+        public const string ConfigurationAttributeNamespace = "CSApp.V2.Generated.Configuration";
         public const string ConfigurationAttributeName = "ConfigurationAttribute";
         public const string ConfigurationAttributeFullName = ConfigurationAttributeNamespace + "." + ConfigurationAttributeName;
 
