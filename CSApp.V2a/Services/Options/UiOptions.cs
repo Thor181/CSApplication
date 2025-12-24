@@ -1,4 +1,4 @@
-﻿using CSApp.V2a.Generated.Configuration;
+﻿using CSApp.V2.Generated.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;

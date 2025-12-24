@@ -1,4 +1,4 @@
-﻿using CSApp.V2a.Generated.Configuration;
+﻿using CSApp.V2.Generated.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
