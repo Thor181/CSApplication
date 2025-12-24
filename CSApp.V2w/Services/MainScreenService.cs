@@ -28,11 +28,9 @@ namespace CSApp.V2w.Services
         {
             _uiOptions = uiOptions.Value;
 
-#pragma warning disable CA1416 // Validate platform compatibility
             _audioPlayer = audioPlayer;
             _audioPlayer.Load("Assets/Sounds/error.wav", ErrorSound);
             _audioPlayer.Load("Assets/Sounds/success.wav", SuccessSound);
-#pragma warning restore CA1416 // Validate platform compatibility
 
             CurrentText = _uiOptions.HelloMessage;
             CurrentColor = _uiOptions.MainColor;
@@ -89,7 +87,6 @@ namespace CSApp.V2w.Services
                 default:
                     throw new NotImplementedException($"Sound not found for status = '{status}'");
             }
-            ;
         }
     }
 }
