@@ -13,6 +13,7 @@ namespace СSApp
             try
             {
                 InitializeComponent();
+                DataContext = new MainViewModel();
             }
             catch (Exception e)
             {
@@ -22,14 +23,14 @@ namespace СSApp
 
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
-            if (e.ExtentHeightChange == 0)
-                if (ScrollViewer.VerticalOffset == ScrollViewer.ScrollableHeight)
-                    AutoScroll = true;
-                else
-                    AutoScroll = false;
+            //if (e.ExtentHeightChange == 0)
+            //    if (ScrollViewer.VerticalOffset == ScrollViewer.ScrollableHeight)
+            //        AutoScroll = true;
+            //    else
+            //        AutoScroll = false;
 
-            if (AutoScroll && e.ExtentHeightChange != 0)
-                ScrollViewer.ScrollToVerticalOffset(ScrollViewer.ExtentHeight);
+            //if (AutoScroll && e.ExtentHeightChange != 0)
+            //    ScrollViewer.ScrollToVerticalOffset(ScrollViewer.ExtentHeight);
         }
     }
 }

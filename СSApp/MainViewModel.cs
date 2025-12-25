@@ -42,6 +42,7 @@ namespace СSApp
             InitializeDatabaseValues();
 
             InitializePersistentValus();
+
         }
 
         private void InitializeDatabaseValues()
@@ -50,7 +51,7 @@ namespace СSApp
             var result = initializationLogic.InitializePayTypes();
             var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
 
-            Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
+            Logger.Instance?.Log(result.MessageBuilder.ToString(), logLevel);
         }
 
         private void InitializePorts()
@@ -77,7 +78,7 @@ namespace СSApp
             var result = PersistentValues.Initialize();
 
             var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
-            Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
+            Logger.Instance?.Log(result.MessageBuilder.ToString(), logLevel);
         }
 
         private void InputOutputPortDataReceived(SerialPort port, string data)
@@ -88,14 +89,14 @@ namespace СSApp
 
             if (!findResult.DbAvailable)
             {
-                Logger.Instance.Log("База данных недоступна", LogLevel.Error);
+                Logger.Instance?.Log("База данных недоступна", LogLevel.Error);
                 PortWorker.SendHexResponse(port, PortWorker.x31);
                 return;
             }
 
             if (!findResult.IsSuccess || findResult.Entity == null)
             {
-                Logger.Instance.Log(findResult.MessageBuilder.ToString(), LogLevel.Error);
+                Logger.Instance?.Log(findResult.MessageBuilder.ToString(), LogLevel.Error);
                 PortWorker.SendHexResponse(port, PortWorker.x32);
                 return;
             }
@@ -105,14 +106,14 @@ namespace СSApp
             var isExpired = DateTime.Now >= entity.Before;
             if (isExpired)
             {
-                Logger.Instance.Log($"Значение поля {nameof(entity.Before)} больше либо равно текущей дате (Номер карты: {entity.Card})", LogLevel.Error);
+                Logger.Instance?.Log($"Значение поля {nameof(entity.Before)} больше либо равно текущей дате (Номер карты: {entity.Card})", LogLevel.Error);
                 PortWorker.SendHexResponse(port, PortWorker.x33);
                 return;
             }
 
             if (port.PortName == AppConfig.Instance.PortInputName && entity.PlaceId == PersistentValues.OutTerritoryPlace?.Id)
             {
-                Logger.Instance.Log($"Порт - вход, место - {Constants.OutTerritoryPlaceName}", LogLevel.Info);
+                Logger.Instance?.Log($"Порт - вход, место - {Constants.OutTerritoryPlaceName}", LogLevel.Info);
                 PortWorker.SendHexResponse(port, PortWorker.x06);
                 WriteCardEvent(entity, port.PortName);
                 entity.PlaceId = PersistentValues.AtTerritoryPlace.Id;
@@ -120,11 +121,11 @@ namespace СSApp
                 var saveResult = userLogic.SaveChanges();
 
                 if (!saveResult.IsSuccess)
-                    Logger.Instance.Log(saveResult.MessageBuilder.ToString(), LogLevel.Error);
+                    Logger.Instance?.Log(saveResult.MessageBuilder.ToString(), LogLevel.Error);
             }
             else if (port.PortName == AppConfig.Instance.PortOutputName && entity.PlaceId == PersistentValues.AtTerritoryPlace?.Id)
             {
-                Logger.Instance.Log($"Порт - выход, место - {Constants.AtTerritoryPlaceName}", LogLevel.Info);
+                Logger.Instance?.Log($"Порт - выход, место - {Constants.AtTerritoryPlaceName}", LogLevel.Info);
                 PortWorker.SendHexResponse(port, PortWorker.x06);
                 WriteCardEvent(entity, port.PortName);
                 entity.PlaceId = PersistentValues.OutTerritoryPlace.Id;
@@ -132,19 +133,19 @@ namespace СSApp
                 var saveResult = userLogic.SaveChanges();
 
                 if (!saveResult.IsSuccess)
-                    Logger.Instance.Log(saveResult.MessageBuilder.ToString(), LogLevel.Error);
+                    Logger.Instance?.Log(saveResult.MessageBuilder.ToString(), LogLevel.Error);
             }
             else
             {
                 if (entity.Staff)
                 {
-                    Logger.Instance.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) является сотрудником", LogLevel.Success);
+                    Logger.Instance?.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) является сотрудником", LogLevel.Success);
                     PortWorker.SendHexResponse(port, PortWorker.x06);
                     WriteCardEvent(entity, port.PortName);
                 }
                 else
                 {
-                    Logger.Instance.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) не является сотрудником " +
+                    Logger.Instance?.Log($"Пользователь {entity.Surname} {entity.Name} {entity.Name} (ID: {entity.Id}) не является сотрудником " +
                         $"и не соответствует требованиям алгоритма пропуска (Порт:Вход-Место:За территорией ИЛИ Порт:Выход-Место:На территории). Текущее место: {entity.Place.Name}", LogLevel.Warn);
                     PortWorker.SendHexResponse(port, PortWorker.x34);
                 }
@@ -159,7 +160,7 @@ namespace СSApp
             var isTodayDate = DateTime.Today.Date == date.Date;
             if (!isTodayDate)
             {
-                Logger.Instance.Log($"Дата в QR-коде ({date.Date.Date}) отличается от текущей", LogLevel.Warn);
+                Logger.Instance?.Log($"Дата в QR-коде ({date.Date.Date}) отличается от текущей", LogLevel.Warn);
                 SendQRResponse(readablePort, PortWorker.x41);
             }
             else
@@ -168,7 +169,7 @@ namespace СSApp
                 var isFNExists = AppConfig.Instance.FNNumbers.Contains(fnNumber);
                 if (!isFNExists)
                 {
-                    Logger.Instance.Log($"Номер ФН ({fnNumber}) отсутствует в конфиге", LogLevel.Warn);
+                    Logger.Instance?.Log($"Номер ФН ({fnNumber}) отсутствует в конфиге", LogLevel.Warn);
                     SendQRResponse(readablePort, PortWorker.x42);
                 }
                 else
@@ -183,7 +184,7 @@ namespace СSApp
 
                     if (!result.IsSuccess)
                     {
-                        Logger.Instance.Log(result.MessageBuilder.ToString(), LogLevel.Error);
+                        Logger.Instance?.Log(result.MessageBuilder.ToString(), LogLevel.Error);
                         return;
                     }
 
@@ -191,7 +192,7 @@ namespace СSApp
 
                     if (todayQREvents != null && todayQREvents.Any())
                     {
-                        Logger.Instance.Log($"В базе уже присутствуют записи с номером ФП {fpNumber}, текущего дня и типом {type.Name}", LogLevel.Warn);
+                        Logger.Instance?.Log($"В базе уже присутствуют записи с номером ФП {fpNumber}, текущего дня и типом {type.Name}", LogLevel.Warn);
                         SendQRResponse(readablePort, PortWorker.x43);
                     }
                     else
@@ -222,7 +223,7 @@ namespace СSApp
             var result = cardEventLogic.WriteCardEvent(typeId, pointId, user.Card);
 
             var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
-            Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
+            Logger.Instance?.Log(result.MessageBuilder.ToString(), logLevel);
         }
 
         private void WriteQREvent(int typeId, decimal sum, string fn, string fp)
@@ -231,7 +232,7 @@ namespace СSApp
             var result = qrEventLogic.WriteQREvent(typeId, sum, fn, fp, PersistentValues.Point.Id, PersistentValues.EmptyPayType.Id);
 
             var logLevel = result.IsSuccess ? LogLevel.Success : LogLevel.Error;
-            Logger.Instance.Log(result.MessageBuilder.ToString(), logLevel);
+            Logger.Instance?.Log(result.MessageBuilder.ToString(), logLevel);
         }
 
         private void LoggerInternal_MessageReceived(string message, CSLibrary.Log.LogLevel logLevel, Exception e = null)

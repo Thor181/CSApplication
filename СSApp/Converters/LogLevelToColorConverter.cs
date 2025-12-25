@@ -1,7 +1,7 @@
 ﻿using CSLibrary.Log;
-using System.Drawing;
 using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Media;
 
 namespace СSApp.Converters
 {
@@ -10,7 +10,10 @@ namespace СSApp.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return ((LogLevel)value).GetColor();
+            if (value == null || value is not LogLevel logLevel)
+                return new SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 255, 255));
+
+            return logLevel.GetColor();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

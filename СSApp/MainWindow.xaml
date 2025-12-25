@@ -7,25 +7,22 @@
         mc:Ignorable="d"
         Title="CSApplication" Height="450" Width="1000" ResizeMode="NoResize"
         Name="MainView">
-    <Window.Style>
+    <!--<Window.Style>
         <Style TargetType="Window"
                BasedOn="{StaticResource {x:Type Window}}" />
-    </Window.Style>
-    <Window.DataContext>
+    </Window.Style>-->
+    <!--<Window.DataContext>
         <local:MainViewModel /> 
-    </Window.DataContext>
+    </Window.DataContext>-->
     <Grid>
-        <ScrollViewer x:Name="ScrollViewer"
-                      ScrollChanged="ScrollViewer_ScrollChanged">
             <ListBox ItemsSource="{Binding MessagesCollection}"
                      IsEnabled="False"
                      Width="950">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <local:LineControl DataContext="{Binding}" Width="950"/>
-                    </DataTemplate>
+                        <local:LineControl  Width="950"/>
+                    </DataTemplate> 
                 </ListBox.ItemTemplate>
             </ListBox>
-        </ScrollViewer>
     </Grid>
 </Window>

@@ -66,7 +66,7 @@ namespace CSLibrary
 
             if (deserialized == null)
             {
-                Logger.Instance.Log("Конфиг не распознан", LogLevel.Fatal);
+                Logger.Instance?.Log("Конфиг не распознан", LogLevel.Fatal);
                 return;
             }
 
@@ -79,9 +79,9 @@ namespace CSLibrary
         {
             if (DateTime.Now < DateTime.Parse("10.10.2023"))
             {
-                Logger.Instance.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
-                Logger.Instance.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
-                Logger.Instance.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
+                Logger.Instance?.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
+                Logger.Instance?.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
+                Logger.Instance?.Log("Прошу связаться со мной в телеграмме: t.me/artemthor1. Данное сообщение перестанет отображаться после 10.10.2023", LogLevel.Error);
             }
 
             var validationEmptyStrings = Validation.StringsIsNullOrEmpty<AppConfig>(instance, x => x.PortInputName,
@@ -91,14 +91,14 @@ namespace CSLibrary
                                                                                         x => x.PointIdentifier);
 
             if (!validationEmptyStrings.IsSuccess)
-                Logger.Instance.Log(validationEmptyStrings.MessageBuilder.ToString(), LogLevel.Error);
+                Logger.Instance?.Log(validationEmptyStrings.MessageBuilder.ToString(), LogLevel.Error);
 
             var stringsLengthValidation = Validation.AllStringsEquals(16, instance.FNNumbers);
 
             if (!stringsLengthValidation.IsSuccess)
             {
-                Logger.Instance.Log("Валидация ФН номеров прошла неудачно", LogLevel.Error);
-                Logger.Instance.Log(stringsLengthValidation.MessageBuilder.ToString(), LogLevel.Error);
+                Logger.Instance?.Log("Валидация ФН номеров прошла неудачно", LogLevel.Error);
+                Logger.Instance?.Log(stringsLengthValidation.MessageBuilder.ToString(), LogLevel.Error);
             }
 
             var moreThanOneSamePortNames = Validation.StringsCountMoreThanOne(instance.PortInputName,
@@ -107,16 +107,16 @@ namespace CSLibrary
                                                                               instance.PortQR2Name);
 
             if (moreThanOneSamePortNames)
-                Logger.Instance.Log("Обнаружены одинаковые имена портов", LogLevel.Error);
+                Logger.Instance?.Log("Обнаружены одинаковые имена портов", LogLevel.Error);
 
             var dbConnectionStringNotValid = instance.DbConnectionString.TrustedConnection == true
                                             && !string.IsNullOrEmpty(instance.DbConnectionString.User);
 
             if (instance.FNNumbers.Count == 0)
-                Logger.Instance.Log($"Не обнаружены номера FN ({nameof(instance.FNNumbers)})", LogLevel.Warn);
+                Logger.Instance?.Log($"Не обнаружены номера FN ({nameof(instance.FNNumbers)})", LogLevel.Warn);
 
             if (dbConnectionStringNotValid)
-                Logger.Instance.Log($"Поле {nameof(DbConnectionString.User)} и {nameof(DbConnectionString.Password)} не имеют значения, " +
+                Logger.Instance?.Log($"Поле {nameof(DbConnectionString.User)} и {nameof(DbConnectionString.Password)} не имеют значения, " +
                     $"если {nameof(instance.DbConnectionString.TrustedConnection)} равно \"true\"", LogLevel.Warn);
         }
     }

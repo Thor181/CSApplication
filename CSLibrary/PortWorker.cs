@@ -55,7 +55,7 @@ namespace CSLibrary
             }
             catch (Exception e)
             {
-                Logger.Instance.Log("При открытии портов возникла ошибка", LogLevel.Error, e);
+                Logger.Instance?.Log("При открытии портов возникла ошибка", LogLevel.Error, e);
             }
         }
 
@@ -64,11 +64,11 @@ namespace CSLibrary
             try
             {
                 serialPort.Open();
-                Logger.Instance.Log($"Порт {serialPort.PortName} открыт", LogLevel.Success);
+                Logger.Instance?.Log($"Порт {serialPort.PortName} открыт", LogLevel.Success);
             }
             catch (Exception e)
             {
-                Logger.Instance.Log($"При открытии порта {serialPort.PortName} возникла ошибка", LogLevel.Error, e);
+                Logger.Instance?.Log($"При открытии порта {serialPort.PortName} возникла ошибка", LogLevel.Error, e);
             }
         }
 
@@ -79,27 +79,27 @@ namespace CSLibrary
             {
                 Thread.Sleep(100);
                 var data = port.ReadExisting();
-                Logger.Instance.Log($"<- Получено ({port.PortName}): {data}", LogLevel.Info);
+                Logger.Instance?.Log($"<- Получено ({port.PortName}): {data}", LogLevel.Info);
 
                 PortDataReceived?.Invoke(port, data);
             }
             catch (InvalidOperationException ex)
             {
-                Logger.Instance.Log($"Порт {port.PortName} не открыт", LogLevel.Error, ex);
+                Logger.Instance?.Log($"Порт {port.PortName} не открыт", LogLevel.Error, ex);
                 OpenPort(port);
             }
             catch (Exception ex)
             {
-                Logger.Instance.Log("Ошибка", LogLevel.Error, ex);
+                Logger.Instance?.Log("Ошибка", LogLevel.Error, ex);
             }
         }
 
         private void PortErrorReceivedInternal(object sender, SerialErrorReceivedEventArgs e)
         {
             if (sender is SerialPort port)
-                Logger.Instance.Log($"От порта {port.PortName} получена ошибка | {e.EventType}", LogLevel.Error);
+                Logger.Instance?.Log($"От порта {port.PortName} получена ошибка | {e.EventType}", LogLevel.Error);
             else
-                Logger.Instance.Log($"Непредвиденная ошибка | {e.EventType}", LogLevel.Error);
+                Logger.Instance?.Log($"Непредвиденная ошибка | {e.EventType}", LogLevel.Error);
         }
 
         public void SendHexResponse(SerialPort serialPort, byte data)
@@ -107,16 +107,16 @@ namespace CSLibrary
             try
             {
                 serialPort.Write(new byte[] { data }, 0, 1);
-                Logger.Instance.Log($"-> Отправлено ({serialPort.PortName}): 0x{Convert.ToHexString(new byte[] { data })}", LogLevel.Info);
+                Logger.Instance?.Log($"-> Отправлено ({serialPort.PortName}): 0x{Convert.ToHexString(new byte[] { data })}", LogLevel.Info);
             }
             catch (InvalidOperationException e)
             {
-                Logger.Instance.Log($"Порт {serialPort.PortName} не открыт", LogLevel.Error, e);
+                Logger.Instance?.Log($"Порт {serialPort.PortName} не открыт", LogLevel.Error, e);
                 OpenPort(serialPort);
             }
             catch (Exception e)
             {
-                Logger.Instance.Log($"При отправке ответа на порт {serialPort.PortName} возникла ошибка", LogLevel.Error, e);
+                Logger.Instance?.Log($"При отправке ответа на порт {serialPort.PortName} возникла ошибка", LogLevel.Error, e);
             }
         }
     }
