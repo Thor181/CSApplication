@@ -129,14 +129,29 @@ namespace CSLibrary.Tests
             Assert.Throws<FormatException>(() => _ = di.GetSum());
         }
 
-        [Fact]
-        public void SettingData_MultipleCalls_ShouldAccumulateKeys_AndCauseArgumentExceptionOnDuplicate()
-        {
-            var di = new DataInterpreter();
-            di.Data = "t=20251114T0905&s=1&fn=1&fp=1";
+        //[Fact]
+        //public void SettingData_MultipleCalls_ShouldAccumulateKeys_AndCauseArgumentExceptionOnDuplicate()
+        //{
+        //    var di = new DataInterpreter();
+        //    di.Data = "t=20251114T0905&s=1&fn=1&fp=1";
 
-            Assert.Throws<ArgumentException>(() =>
-                di.Data = "t=20251114T1000&s=2&fn=2&fp=2");
+        //    Assert.Throws<ArgumentException>(() =>
+        //        di.Data = "t=20251114T1000&s=2&fn=2&fp=2");
+        //}
+
+        [Fact]
+        public void SettingData_WithDuplicatedData_IdempotentParsing()
+        {
+            var di =CreateWith("t=20251226T1936&s=10&fn=9960440503006888&i=32824&fp=0119363401&n=2\r\nt=20251226T1936&s=10&fn=9960440503006888&i=32824&fp=0119363401&n=2");
+            var date = di.GetDate();
+            var sum = di.GetSum();
+            var fn = di.GetFNNumber();
+            var fp = di.GetFPNumber();
+            
+            Assert.Equal(new DateTime(2025, 12, 26, 19, 36, 0), date);
+            Assert.Equal(10, sum);
+            Assert.Equal("9960440503006888", fn);
+            Assert.Equal("0119363401", fp);
         }
     }
 }

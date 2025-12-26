@@ -2,19 +2,18 @@
 {
     public class DataInterpreter
     {
-        private string _data;
-        public string Data
-        {
-            get { return _data; }
-            set { _data = value; ParseData(); }
-        }
-
-        private Dictionary<string, string> _keyValus = new();
-
         private const string TimeKey = "t";
         private const string SumKey = "s";
         private const string FNKey = "fn";
         private const string FPKey = "fp";
+
+        public string Data
+        {
+            get { return field; }
+            set { field = value; ParseData(); }
+        }
+
+        private Dictionary<string, string> _keyValus = new();
 
         private void ParseData()
         {
@@ -22,7 +21,9 @@
             foreach (var pair in splittedPairs)
             {
                 var splittedPair = pair.Split('=');
-                _keyValus.Add(splittedPair[0].ToLower(), splittedPair[1]);
+                var key = splittedPair[0].ToLower();
+                var value = splittedPair[1];
+                _keyValus[key] = value;
             }
         }
         
